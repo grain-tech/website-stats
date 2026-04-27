@@ -109,6 +109,7 @@
       font-weight: 900;
       font-size: 1.5rem;
       line-height: 1.2;
+      text-transform: uppercase;
     }
 
     .header-sub {
@@ -279,10 +280,8 @@
     .kpi-card.visible { animation: fadeUp 0.45s ease forwards; }
 
     .kpi-label {
-      font-size: 0.65rem;
+      font-size: 14px;
       font-weight: 500;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
       color: var(--text-secondary);
     }
 
@@ -453,6 +452,7 @@
       display:flex; align-items:center; padding:0 0.85rem;
       font-size:0.78rem; font-weight:500; color:var(--text);
       transition:width 1.2s cubic-bezier(0.22,0.61,0.36,1); width:0;
+      white-space:nowrap; min-width:fit-content;
     }
     .funnel-val { font-family:'Kapra Neue','Funkis A',sans-serif; font-weight:900; font-size:0.95rem; text-align:right; }
     .funnel-arrow { display:flex; justify-content:center; padding:1px 0 1px 1.5rem; color:var(--text-muted); }
@@ -467,9 +467,38 @@
     .bar-fill { height:100%; border-radius:4px; transition:width 1.2s cubic-bezier(0.22,0.61,0.36,1); width:0; }
     .bar-val { font-size:0.8rem; font-weight:700; text-align:right; font-variant-numeric:tabular-nums; }
 
+    /* ─── CHART TOOLTIP ─── */
+    .chart-wrap { position: relative; }
+    .chart-tooltip {
+      position: absolute;
+      background: #1A1A1A;
+      color: #FFFCF7;
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 12px;
+      font-family: 'Funkis A', sans-serif;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.15s;
+      white-space: nowrap;
+      z-index: 10;
+      line-height: 1.5;
+    }
+    .chart-tooltip.show { opacity: 1; }
+    .chart-tooltip-row { display: flex; align-items: center; gap: 6px; }
+    .chart-tooltip-dot { width: 6px; height: 6px; border-radius: 50%; }
+
+    /* ─── DONUT HOVER ─── */
+    .donut-svg circle { transition: opacity 0.2s, stroke-width 0.2s; cursor: pointer; }
+    .donut-svg.hovering circle { opacity: 0.3; }
+    .donut-svg.hovering circle.hovered { opacity: 1; stroke-width: 5; }
+    .legend-item { transition: opacity 0.2s; cursor: pointer; }
+    .donut-container.hovering .legend-item { opacity: 0.4; }
+    .donut-container.hovering .legend-item.hovered { opacity: 1; }
+
     /* ─── TABLE ─── */
     .stat-table { width:100%; border-collapse:collapse; }
-    .stat-table th { font-size:0.6rem; font-weight:500; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-muted); text-align:left; padding:0 0 0.5rem; border-bottom:1px solid var(--border); }
+    .stat-table th { font-size:12px; font-weight:500; color:var(--text-muted); text-align:left; padding:0 0 0.5rem; border-bottom:1px solid var(--border); }
     .stat-table th:last-child, .stat-table td:last-child { text-align:right; }
     .stat-table td { font-size:0.8rem; padding:0.5rem 0; border-bottom:1px solid #f0ede9; color:var(--text-secondary); }
     .stat-table tr:last-child td { border-bottom:none; }
@@ -483,10 +512,9 @@
       <svg width="20" height="20" viewBox="0 0 24 24" fill="#1a1a1a"><path d="M20.5441 0.00360107V7.28361C20.5441 8.78497 20.0076 10.2611 19.0967 11.4493C18.2687 12.5294 17.2102 13.3755 15.9392 13.8795C14.8159 14.38 13.3542 14.9093 13.293 14.9273C13.293 14.8768 13.293 14.8012 13.293 14.7616C13.293 12.3854 13.293 9.99831 13.3074 7.62924C13.347 5.62022 14.1391 3.91363 15.6116 2.53108C16.3605 1.8182 17.2066 1.39335 18.067 1.01891L20.5441 0.00720147V0.00360107Z"/><path d="M4.00745 9.40759C4.5475 9.61642 5.10195 9.78563 5.6096 10.0017C6.29007 10.2897 7.00294 10.5345 7.6366 10.9018C9.37917 11.9171 10.5277 13.4544 11.0353 15.4275C11.2046 16.0827 11.2694 16.7488 11.2658 17.4257C11.2622 19.5463 11.2658 21.6634 11.2658 23.784C11.2658 23.8524 11.2658 23.9208 11.2658 24C10.5817 23.9532 9.94443 23.802 9.33237 23.55C7.09295 22.6319 5.50519 21.0513 4.5727 18.819C4.19466 17.9081 4.01105 16.9612 4.01105 15.9819C4.01105 13.8577 4.01105 11.7046 4.01105 9.58041C4.01105 9.53001 4.01105 9.4832 4.01105 9.40399L4.00745 9.40759Z"/><path d="M11.2658 10.2575C10.9346 10.1387 10.6106 10.0343 10.3226 9.9263C9.47647 9.57346 8.68079 9.27102 7.84911 8.89298C6.14975 7.97128 4.93283 6.55993 4.34597 4.70212C4.10115 3.92803 3.99314 3.06034 4.00034 2.25025C4.00394 1.58418 4.00034 0.918101 4.00034 0.248427C4.00034 0.187221 4.00034 0.0864096 4.00034 0C4.27756 0.108012 4.56559 0.212423 4.81762 0.316835C5.6601 0.662473 6.54219 0.972107 7.35227 1.38255C8.93282 2.17824 10.0453 3.44558 10.7222 5.08376C11.111 6.02347 11.2839 7.00998 11.2658 8.02889V10.2575Z"/><path d="M20.544 14.0882C20.5332 14.9559 20.5944 16.4357 20.4 17.5626C20.0579 19.118 19.2299 20.5365 18.1174 21.6706C16.9904 22.8192 15.6007 23.5536 14.0238 23.9065C13.7609 23.9641 13.5881 23.9929 13.2965 23.9929C13.2965 23.568 13.2965 23.1792 13.2965 22.7904C13.2965 22.0163 13.2677 21.199 13.4261 20.4321C13.8257 18.4951 14.8626 16.9937 16.4648 15.8596C17.2641 15.3591 17.8401 15.1467 18.5782 14.8479C19.1759 14.6031 19.9319 14.2826 20.5476 14.0918"/></svg>
     </a>
     <span class="nav-sep"></span>
-    <a class="nav-back" href="index.html">
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 3L5 8l5 5"/></svg>
-      All Campaigns
-    </a>
+    <a class="nav-back" href="index.html">Web Statistics</a>
+    <span style="color:var(--text-muted);font-size:0.8rem">/</span>
+    <span style="font-size:0.8rem;color:var(--text)">Missing Recipes</span>
     <div class="nav-right">
       <span class="nav-live"></span>
       <span class="nav-updated" id="navUpdated">Updated just now</span>
@@ -516,7 +544,7 @@
           </div>
         </div>
       </div>
-      <a class="btn" href="#">View campaign</a>
+      <a class="btn" href="https://grain-tech.github.io/missing-recipes/" target="_blank">View site</a>
     </div>
   </header>
 
@@ -536,7 +564,10 @@
             <span class="chart-legend-item"><span class="chart-legend-dot" style="background:var(--green)"></span>Matched</span>
           </div>
         </div>
-        <svg class="lc-svg" id="lineChart" viewBox="0 0 600 200" preserveAspectRatio="xMidYMid meet"></svg>
+        <div class="chart-wrap">
+          <svg class="lc-svg" id="lineChart" viewBox="0 0 600 200" preserveAspectRatio="xMidYMid meet"></svg>
+          <div class="chart-tooltip" id="chartTooltip"></div>
+        </div>
       </section>
       <section class="card" id="recipeSplitCard">
         <h2 class="card-title">Recipe Split</h2>
@@ -713,19 +744,60 @@
       makeLine(DAILY_VIEWS,'lc-area-views','lc-line-views');
       makeLine(DAILY_SUBS,'lc-area-started','lc-line-started');
       makeLine(DAILY_MATCH,'lc-area-completed','lc-line-completed');
+
+      // Interactive hover
+      const tooltip=document.getElementById('chartTooltip');
+      const hoverLine=svgEl('line',{x1:0,x2:0,y1:pad.t,y2:pad.t+H,stroke:'#1A1A1A','stroke-width':'0.5','stroke-dasharray':'3,3',opacity:'0'});
+      svg.appendChild(hoverLine);
+      const hoverRect=svgEl('rect',{x:pad.l,y:pad.t,width:W,height:H,fill:'transparent',style:'cursor:crosshair'});
+      svg.appendChild(hoverRect);
+      hoverRect.addEventListener('mousemove',e=>{
+        const rect=svg.getBoundingClientRect();
+        const mx=(e.clientX-rect.left)/rect.width*600;
+        const idx=Math.round((mx-pad.l)/W*(DAILY_VIEWS.length-1));
+        if(idx<0||idx>=DAILY_VIEWS.length)return;
+        const cx=x(idx);
+        hoverLine.setAttribute('x1',cx);hoverLine.setAttribute('x2',cx);hoverLine.setAttribute('opacity','1');
+        const sx=rect.width/600;
+        tooltip.innerHTML=`<div style="font-weight:700;margin-bottom:4px">${DAY_LABELS[idx]}</div>
+          <div class="chart-tooltip-row"><span class="chart-tooltip-dot" style="background:var(--grey-line)"></span>Views: ${DAILY_VIEWS[idx]}</div>
+          <div class="chart-tooltip-row"><span class="chart-tooltip-dot" style="background:var(--yellow)"></span>Submissions: ${DAILY_SUBS[idx]}</div>
+          <div class="chart-tooltip-row"><span class="chart-tooltip-dot" style="background:var(--green)"></span>Matched: ${DAILY_MATCH[idx]}</div>`;
+        tooltip.classList.add('show');
+        tooltip.style.left=`${cx*sx+8}px`;
+        tooltip.style.top=`${y(DAILY_VIEWS[idx])*(rect.height/200)-20}px`;
+      });
+      hoverRect.addEventListener('mouseleave',()=>{hoverLine.setAttribute('opacity','0');tooltip.classList.remove('show');});
     })();
 
     // ─── RECIPE SPLIT DONUT ───
     (function(){
       const svg=document.getElementById('recipeDonut');
       const legend=document.getElementById('recipeLegend');
+      const container=svg.closest('.donut-container');
       const R=15.915;let offset=0;const total=RECIPE_SPLIT.reduce((s,r)=>s+r.count,0);
-      RECIPE_SPLIT.forEach(d=>{
+      const circles=[];const legendItems=[];
+      RECIPE_SPLIT.forEach((d,i)=>{
         const circ=2*Math.PI*R;const dash=(d.count/total)*circ;
-        svg.appendChild(svgEl('circle',{cx:18,cy:18,r:R,fill:'none',stroke:d.color,'stroke-width':4,'stroke-dasharray':`${dash} ${circ-dash}`,'stroke-dashoffset':-offset,'stroke-linecap':'round'}));
+        const c=svgEl('circle',{cx:18,cy:18,r:R,fill:'none',stroke:d.color,'stroke-width':4,'stroke-dasharray':`${dash} ${circ-dash}`,'stroke-dashoffset':-offset,'stroke-linecap':'round','data-idx':i});
+        svg.appendChild(c);circles.push(c);
         offset+=dash;
-        legend.innerHTML+=`<div class="legend-item"><img class="legend-img" src="${d.img}" alt="${d.name}"/><span class="legend-name">${d.name}</span><span class="legend-val">${d.count}</span></div>`;
+        legend.innerHTML+=`<div class="legend-item" data-idx="${i}"><img class="legend-img" src="${d.img}" alt="${d.name}"/><span class="legend-name">${d.name}</span><span class="legend-val">${d.count}</span></div>`;
       });
+      // Collect legend items after innerHTML
+      legend.querySelectorAll('.legend-item').forEach(li=>legendItems.push(li));
+      function highlight(idx){
+        svg.classList.add('hovering');container.classList.add('hovering');
+        circles.forEach((c,i)=>{c.classList.toggle('hovered',i===idx);});
+        legendItems.forEach((li,i)=>{li.classList.toggle('hovered',i===idx);});
+      }
+      function unhighlight(){
+        svg.classList.remove('hovering');container.classList.remove('hovering');
+        circles.forEach(c=>c.classList.remove('hovered'));
+        legendItems.forEach(li=>li.classList.remove('hovered'));
+      }
+      circles.forEach((c,i)=>{c.addEventListener('mouseenter',()=>highlight(i));c.addEventListener('mouseleave',unhighlight);});
+      legendItems.forEach((li,i)=>{li.addEventListener('mouseenter',()=>highlight(i));li.addEventListener('mouseleave',unhighlight);});
     })();
 
     // ─── DEVICES ───
