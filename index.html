@@ -230,6 +230,39 @@
       box-shadow: 0 4px 12px rgba(254,204,7,0.4);
     }
 
+    .modal-date-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .modal-date-input {
+      flex: 1;
+      position: relative;
+    }
+
+    .modal-date-input .modal-input {
+      width: 100%;
+      padding-right: 40px;
+    }
+
+    .modal-date-icon {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 16px;
+      color: var(--grey);
+      pointer-events: none;
+    }
+
+    .modal-date-to {
+      font-size: 14px;
+      color: var(--grey);
+      flex-shrink: 0;
+    }
+
     .modal-submit:disabled {
       opacity: 0.5;
       cursor: not-allowed;
@@ -593,10 +626,16 @@
       </div>
       <div class="modal-field">
         <label class="modal-label">Campaign period</label>
-        <div style="display:flex;gap:0.5rem;align-items:center;">
-          <input class="modal-input" id="modalStart" type="date" style="flex:1" />
-          <span style="color:var(--grey);font-size:0.8rem;">to</span>
-          <input class="modal-input" id="modalEnd" type="date" style="flex:1" />
+        <div class="modal-date-row">
+          <div class="modal-date-input">
+            <input class="modal-input" id="modalStart" type="date" />
+            <svg class="modal-date-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="2" y="2" width="12" height="12" rx="2"/><path d="M2 6h12M5 2v4M11 2v4"/></svg>
+          </div>
+          <span class="modal-date-to">to</span>
+          <div class="modal-date-input">
+            <input class="modal-input" id="modalEnd" type="date" />
+            <svg class="modal-date-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="2" y="2" width="12" height="12" rx="2"/><path d="M2 6h12M5 2v4M11 2v4"/></svg>
+          </div>
         </div>
       </div>
       <div class="modal-actions">
