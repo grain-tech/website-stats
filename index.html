@@ -310,6 +310,8 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
     }
 
     .header-tabs {
@@ -662,6 +664,31 @@
       color: var(--grey);
     }
 
+    .search-shortcut {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      margin-left: auto;
+      flex-shrink: 0;
+    }
+
+    .search-kbd {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 22px;
+      height: 22px;
+      padding: 0 5px;
+      background: #FFFCF7;
+      border: 1px solid var(--grey-line);
+      border-radius: 5px;
+      font-family: 'Funkis A', sans-serif;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--grey);
+      line-height: 1;
+    }
+
     .card-kpi-label {
       font-size: 14px;
       font-weight: 500;
@@ -672,6 +699,18 @@
     }
 
 
+    /* ─── MOBILE ─── */
+    @media (max-width: 640px) {
+      .nav { padding: 12px 24px; }
+      .global-bar-search { display: none; }
+      .page-header { padding: 24px 24px 0; }
+      .header-toolbar { gap: 12px; }
+      .header-tab { padding: 10px 14px; font-size: 13px; }
+      .header-btn-outline { padding: 10px 14px; font-size: 13px; white-space: nowrap; }
+      .nav-add { padding: 10px 14px; font-size: 13px; white-space: nowrap; }
+      .campaigns { grid-template-columns: 1fr; padding: 24px 24px 48px; }
+      .modal { width: min(400px, calc(100vw - 48px)); padding: 24px; }
+    }
   </style>
 </head>
 <body>
@@ -685,6 +724,10 @@
     <div class="global-bar-search">
       <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="7" cy="7" r="5"/><path d="M11 11l3.5 3.5"/></svg>
       <input type="text" id="campaignSearch" placeholder="Search by name of website" autocomplete="off" />
+      <div class="search-shortcut">
+        <span class="search-kbd">&#8984;</span>
+        <span class="search-kbd">F</span>
+      </div>
     </div>
   </nav>
 

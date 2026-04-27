@@ -64,7 +64,7 @@
       display: inline-flex;
       align-items: center;
       gap: 12px;
-      padding: 14px 48px;
+      padding: 14px 24px;
       background: #FFFFFF;
       border: 1px solid #E0DCD7;
       border-radius: 10px;
