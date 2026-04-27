@@ -287,7 +287,7 @@
       background: var(--card-bg);
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 1.25rem;
+      padding: 1.5rem;
       text-decoration: none;
       color: var(--off-black);
       display: flex;
@@ -416,8 +416,33 @@
       line-height: 1.1;
     }
 
+    .card-delete {
+      position: absolute;
+      top: 0.75rem;
+      right: 0.75rem;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: none;
+      background: transparent;
+      color: var(--grey);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s, color 0.15s;
+      z-index: 2;
+    }
+
+    .card-delete:hover {
+      background: #FFECEC;
+      color: #FF2E2E;
+    }
+
+    .card-delete svg { width: 14px; height: 14px; }
+
     .card-kpi-label {
-      font-size: 12px;
+      font-size: 14px;
       font-weight: 500;
       text-transform: none;
       letter-spacing: 0.02em;
@@ -559,6 +584,9 @@
 
         const spark = Array.from({length:14}, () => Math.floor(Math.random()*40)+10);
         card.innerHTML = `
+          <button class="card-delete" data-idx="${idx}" title="Delete campaign">
+            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 2l10 10M12 2L2 12"/></svg>
+          </button>
           <div class="card-header">
             <div class="card-name">${c.name}</div>
             <div class="card-date-row">
@@ -576,6 +604,16 @@
             <div class="card-kpi"><span class="card-kpi-value">—</span><span class="card-kpi-label">Conversions</span></div>
           </div>
         `;
+
+        card.querySelector('.card-delete').addEventListener('click', (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const saved = JSON.parse(localStorage.getItem('customCampaigns') || '[]');
+          saved.splice(idx, 1);
+          localStorage.setItem('customCampaigns', JSON.stringify(saved));
+          card.remove();
+        });
+
         grid.appendChild(card);
       });
     }
