@@ -90,6 +90,32 @@
 
     .nav-add svg { width: 14px; height: 14px; }
 
+    .nav-add-wrap { position: relative; }
+
+    .nav-add-tooltip {
+      position: absolute;
+      bottom: calc(100% + 8px);
+      right: 0;
+      background: #1A1A1A;
+      color: #FFFCF7;
+      font-family: 'Funkis A', sans-serif;
+      font-size: 12px;
+      font-weight: 400;
+      line-height: 1.5;
+      padding: 8px 12px;
+      border-radius: 8px;
+      white-space: nowrap;
+      pointer-events: none;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity 0.15s, transform 0.15s;
+    }
+
+    .nav-add-wrap:hover .nav-add-tooltip {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
     .header-btn-outline {
       display: inline-flex;
       align-items: center;
@@ -848,10 +874,13 @@
             </div>
           </div>
         </div>
-        <button class="nav-add" id="addWebsiteBtn">
-          <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 1v12M1 7h12"/></svg>
-          New website
-        </button>
+        <div class="nav-add-wrap">
+          <div class="nav-add-tooltip">Enter the URL of the website you want to track. We'll generate a stats dashboard for it.</div>
+          <button class="nav-add" id="addWebsiteBtn">
+            <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 1v12M1 7h12"/></svg>
+            New website
+          </button>
+        </div>
       </div>
     </div>
   </header>
@@ -885,7 +914,6 @@
         </button>
       </div>
       <div class="modal-body">
-        <p class="modal-desc">Enter the URL of the website you want to track. We'll generate a stats dashboard for it.</p>
         <div class="modal-field">
           <label class="modal-label">Website URL</label>
           <input class="modal-input" id="modalUrl" type="url" placeholder="https://example.grain.com.sg" autocomplete="off" />
