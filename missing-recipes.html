@@ -526,9 +526,22 @@
   <header class="page-header" style="flex-direction:column;gap:12px;">
     <h1 style="font-family:'Kapra Neue',sans-serif;font-weight:900;font-size:24px;text-transform:uppercase;line-height:1.5;color:#1A1A1A;">Missing Recipes</h1>
     <div style="display:flex;align-items:center;justify-content:space-between;width:100%;">
-      <div id="dateBtn" style="background:#FFFCF7;border:1px solid #EAE6E1;border-radius:10px;padding:12px 18px;display:flex;align-items:center;gap:12px;cursor:pointer;min-width:280px;">
-        <span style="font-size:14px;color:#1A1A1A;">14–27 Apr 2026</span>
-        <svg style="width:14px;height:14px;color:#9A9691;margin-left:auto;" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4.78.75V4.24M10.05.75V4.24M.82 6.51H14"/><rect x=".75" y="2.32" width="13.32" height="11.68" rx="2.25"/></svg>
+      <div style="position:relative;">
+        <div id="dateBtn" style="background:#FFFCF7;border:1px solid #EAE6E1;border-radius:10px;padding:12px 18px;display:flex;align-items:center;gap:12px;cursor:pointer;min-width:280px;">
+          <span id="dateDisplay" style="font-size:14px;color:#1A1A1A;">14–27 Apr 2026</span>
+          <svg style="width:14px;height:14px;color:#1A1A1A;margin-left:auto;" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4.78.75V4.24M10.05.75V4.24M.82 6.51H14"/><rect x=".75" y="2.32" width="13.32" height="11.68" rx="2.25"/></svg>
+        </div>
+        <div class="date-picker" id="datePicker">
+          <div class="dp-header">
+            <button class="dp-nav" id="dpPrev">&#8249;</button>
+            <span class="dp-month" id="dpMonth"></span>
+            <button class="dp-nav" id="dpNext">&#8250;</button>
+          </div>
+          <div class="dp-grid" id="dpGrid"></div>
+          <div class="dp-footer">
+            <button class="dp-clear" id="dpClear">Clear</button>
+          </div>
+        </div>
       </div>
       <div style="display:flex;gap:12px;align-items:center;">
         <button class="btn" id="editBtn">Edit</button>
@@ -537,18 +550,6 @@
     </div>
   </header>
 
-  <!-- Date picker popover -->
-  <div class="date-picker" id="datePicker" style="position:fixed;z-index:100;">
-    <div class="dp-header">
-      <button class="dp-nav" id="dpPrev">&#8249;</button>
-      <span class="dp-month" id="dpMonth"></span>
-      <button class="dp-nav" id="dpNext">&#8250;</button>
-    </div>
-    <div class="dp-grid" id="dpGrid"></div>
-    <div class="dp-footer">
-      <button class="dp-clear" id="dpClear">Clear</button>
-    </div>
-  </div>
 
   <main class="dashboard">
 
@@ -959,7 +960,7 @@
         grid.querySelectorAll('.dp-day:not(.other):not(.future)').forEach(b=>{
           b.addEventListener('click',()=>{
             const sel=new Date(y,m,+b.textContent);
-            document.querySelector('.header-date').textContent=sel.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+            document.getElementById('dateDisplay').textContent=sel.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
             picker.classList.remove('open');
           });
         });
@@ -968,7 +969,7 @@
       btn.addEventListener('click',e=>{e.stopPropagation();picker.classList.toggle('open');render();});
       document.getElementById('dpPrev').addEventListener('click',e=>{e.stopPropagation();cur.setMonth(cur.getMonth()-1);render();});
       document.getElementById('dpNext').addEventListener('click',e=>{e.stopPropagation();cur.setMonth(cur.getMonth()+1);render();});
-      document.getElementById('dpClear').addEventListener('click',e=>{e.stopPropagation();document.querySelector('.header-date').textContent='All time';picker.classList.remove('open');});
+      document.getElementById('dpClear').addEventListener('click',e=>{e.stopPropagation();document.getElementById('dateDisplay').textContent='All time';picker.classList.remove('open');});
       document.addEventListener('click',e=>{if(!picker.contains(e.target)&&e.target!==btn)picker.classList.remove('open');});
     })();
   </script>
