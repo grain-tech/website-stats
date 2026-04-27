@@ -87,6 +87,137 @@
 
     .nav-add svg { width: 14px; height: 14px; }
 
+    /* ─── MODAL ─── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: rgba(0,0,0,0.3);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .modal-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 2rem;
+      width: min(440px, 90vw);
+      transform: translateY(12px) scale(0.97);
+      transition: transform 0.3s cubic-bezier(0.22,0.61,0.36,1);
+    }
+
+    .modal-overlay.open .modal {
+      transform: translateY(0) scale(1);
+    }
+
+    .modal-title {
+      font-family: 'Kapra Neue', 'Funkis A', sans-serif;
+      font-weight: 900;
+      font-size: 1.25rem;
+      text-transform: uppercase;
+      margin-bottom: 0.35rem;
+    }
+
+    .modal-desc {
+      font-size: 0.82rem;
+      color: var(--grey);
+      margin-bottom: 1.25rem;
+      line-height: 1.5;
+    }
+
+    .modal-field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      margin-bottom: 1rem;
+    }
+
+    .modal-label {
+      font-size: 0.7rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--faded);
+    }
+
+    .modal-input {
+      padding: 10px 14px;
+      border: 1px solid var(--grey-light);
+      border-radius: 8px;
+      font-family: 'Funkis A', sans-serif;
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.2s;
+      background: var(--bg);
+    }
+
+    .modal-input:focus {
+      border-color: var(--yellow);
+    }
+
+    .modal-input::placeholder {
+      color: var(--grey-light);
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 0.6rem;
+      justify-content: flex-end;
+      margin-top: 1.5rem;
+    }
+
+    .modal-cancel {
+      padding: 9px 18px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--card-bg);
+      font-family: 'Funkis A', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--grey);
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+
+    .modal-cancel:hover { border-color: var(--grey); }
+
+    .modal-submit {
+      padding: 9px 20px;
+      border: none;
+      border-radius: 8px;
+      background: var(--yellow);
+      font-family: 'Funkis A', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--off-black);
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+
+    .modal-submit:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(254,204,7,0.4);
+    }
+
+    .modal-submit:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
     /* ─── HERO ─── */
     .hero {
       padding: 8rem 2rem 4rem;
@@ -314,6 +445,25 @@
 
   <section class="campaigns" id="campaigns"></section>
 
+  <!-- Modal -->
+  <div class="modal-overlay" id="modal">
+    <div class="modal">
+      <div class="modal-title">Add Website</div>
+      <p class="modal-desc">Enter the URL of the website you want to track. We'll generate a stats dashboard for it.</p>
+      <div class="modal-field">
+        <label class="modal-label">Website URL</label>
+        <input class="modal-input" id="modalUrl" type="url" placeholder="https://example.grain.com.sg" autocomplete="off" />
+      </div>
+      <div class="modal-field">
+        <label class="modal-label">Campaign Name</label>
+        <input class="modal-input" id="modalName" type="text" placeholder="e.g. Summer Menu Launch" autocomplete="off" />
+      </div>
+      <div class="modal-actions">
+        <button class="modal-cancel" id="modalCancel">Cancel</button>
+        <button class="modal-submit" id="modalSubmit" disabled>Generate Stats</button>
+      </div>
+    </div>
+  </div>
 
   <script>
     const CAMPAIGNS = [
@@ -340,7 +490,8 @@
         sparkColor: '#9a9691',
       },
       {
-        slug: '#',
+        slug: 'site',
+        url: 'https://occasions.grain.com.sg/whats-new-june-2026',
         name: "What's Cooking June",
         status: 'ended',
         date: '20 May – 30 Jun 2025',
@@ -360,11 +511,10 @@
     const grid = document.getElementById('campaigns');
 
     CAMPAIGNS.forEach((c, idx) => {
-      const isLink = c.slug !== '#';
-      const tag = isLink ? 'a' : 'div';
-      const card = document.createElement(tag);
+      const card = document.createElement('a');
       card.className = 'campaign-card';
-      if (isLink) card.href = `${c.slug}.html`;
+      if (c.url) card.href = `site.html?url=${encodeURIComponent(c.url)}&name=${encodeURIComponent(c.name)}`;
+      else card.href = `${c.slug}.html`;
       card.style.animationDelay = `${idx * 0.12}s`;
 
       card.innerHTML = `
@@ -388,10 +538,89 @@
       grid.appendChild(card);
     });
 
+    // ─── Render user-added campaigns from localStorage ───
+    function renderCustomCampaigns() {
+      const saved = JSON.parse(localStorage.getItem('customCampaigns') || '[]');
+      saved.forEach((c, idx) => {
+        const card = document.createElement('a');
+        card.className = 'campaign-card';
+        card.href = `site.html?url=${encodeURIComponent(c.url)}&name=${encodeURIComponent(c.name)}`;
+        card.style.animationDelay = `${(CAMPAIGNS.length + idx) * 0.12}s`;
+
+        const spark = Array.from({length:14}, () => Math.floor(Math.random()*40)+10);
+        card.innerHTML = `
+          <div class="card-header">
+            <div class="card-name">${c.name}</div>
+            <div class="card-date-row">
+              <span class="card-date">${c.date}</span>
+              <span class="card-status live">Live</span>
+            </div>
+          </div>
+          <div class="card-desc">${c.url}</div>
+          <svg class="card-spark" viewBox="0 0 200 32" preserveAspectRatio="none">
+            <polyline points="${sparkPath(spark, 200, 32)}" stroke="#fecc07" />
+          </svg>
+          <div class="card-kpis">
+            <div class="card-kpi"><span class="card-kpi-value">—</span><span class="card-kpi-label">Views</span></div>
+            <div class="card-kpi"><span class="card-kpi-value">—</span><span class="card-kpi-label">Sessions</span></div>
+            <div class="card-kpi"><span class="card-kpi-value">—</span><span class="card-kpi-label">Conversions</span></div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+    renderCustomCampaigns();
+
     const observer = new IntersectionObserver(entries => {
       entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
     }, { threshold: 0.1 });
     document.querySelectorAll('.campaign-card').forEach(c => observer.observe(c));
+
+    // ─── Modal logic ───
+    const modal = document.getElementById('modal');
+    const modalUrl = document.getElementById('modalUrl');
+    const modalName = document.getElementById('modalName');
+    const modalSubmit = document.getElementById('modalSubmit');
+
+    document.querySelector('.nav-add').addEventListener('click', () => {
+      modal.classList.add('open');
+      setTimeout(() => modalUrl.focus(), 200);
+    });
+
+    document.getElementById('modalCancel').addEventListener('click', () => {
+      modal.classList.remove('open');
+      modalUrl.value = '';
+      modalName.value = '';
+    });
+
+    modal.addEventListener('click', e => {
+      if (e.target === modal) modal.classList.remove('open');
+    });
+
+    function validateModal() {
+      modalSubmit.disabled = !(modalUrl.value.trim() && modalName.value.trim());
+    }
+    modalUrl.addEventListener('input', validateModal);
+    modalName.addEventListener('input', validateModal);
+
+    modalSubmit.addEventListener('click', () => {
+      const url = modalUrl.value.trim();
+      const name = modalName.value.trim();
+      if (!url || !name) return;
+
+      const now = new Date();
+      const date = `${now.getDate()} ${now.toLocaleString('en-GB',{month:'short'})} ${now.getFullYear()}`;
+
+      const saved = JSON.parse(localStorage.getItem('customCampaigns') || '[]');
+      saved.push({ url, name, date });
+      localStorage.setItem('customCampaigns', JSON.stringify(saved));
+
+      modal.classList.remove('open');
+      modalUrl.value = '';
+      modalName.value = '';
+
+      window.location.href = `site.html?url=${encodeURIComponent(url)}&name=${encodeURIComponent(name)}`;
+    });
   </script>
 </body>
 </html>
