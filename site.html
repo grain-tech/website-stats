@@ -136,10 +136,7 @@
 
   <header class="page-header">
     <div>
-      <div class="header-date" id="headerDate" style="display:flex;align-items:center;gap:6px;">
-        27 APR 2026
-        <svg style="width:18px;height:18px;color:#9A9691" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4.78.75V4.24M10.05.75V4.24M.82 6.51H14"/><rect x=".75" y="2.32" width="13.32" height="11.68" rx="2.25"/></svg>
-      </div>
+      <div class="header-date" id="headerDate"></div>
       <div class="header-sub-row">
         <div class="header-sub" id="headerSub">All time overview</div>
         <div class="header-url" id="headerUrl"></div>
@@ -229,7 +226,10 @@
     // ─── Populate header ───
     document.title = `${siteName} Stats — Grain`;
     document.getElementById('navCrumbName').textContent = siteName;
-    document.getElementById('headerDate').textContent = new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+    const now = new Date();
+    const twoWeeksAgo = new Date(now); twoWeeksAgo.setDate(now.getDate() - 14);
+    const fmtDate = d => `${d.getDate()} ${d.toLocaleString('en-GB',{month:'short'}).toUpperCase()} ${d.getFullYear()}`;
+    document.getElementById('headerDate').textContent = `${fmtDate(twoWeeksAgo)} – ${fmtDate(now)}`;
     document.getElementById('headerSub').textContent = `${siteName} — All time overview`;
     document.getElementById('headerUrl').innerHTML = `<a href="${siteUrl}" target="_blank">${siteUrl}</a>`;
     document.getElementById('viewSiteBtn').href = siteUrl;

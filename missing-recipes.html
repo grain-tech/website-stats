@@ -52,6 +52,7 @@
       gap: 8px;
       background: var(--bg);
       border-bottom: 1px solid var(--border);
+      min-height: 60px;
     }
 
     .nav-brand {
@@ -470,7 +471,7 @@
     /* ─── CHART TOOLTIP ─── */
     .chart-wrap { position: relative; }
     .chart-tooltip {
-      position: absolute;
+      position: fixed;
       background: #1A1A1A;
       color: #FFFCF7;
       border-radius: 8px;
@@ -481,7 +482,7 @@
       opacity: 0;
       transition: opacity 0.15s;
       white-space: nowrap;
-      z-index: 10;
+      z-index: 100;
       line-height: 1.5;
     }
     .chart-tooltip.show { opacity: 1; }
@@ -523,10 +524,7 @@
 
   <header class="page-header">
     <div>
-      <div class="header-date">
-        27 Apr 2026
-        <svg style="width:18px;height:18px;vertical-align:middle;margin-left:6px;color:#9A9691" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4.78.75V4.24M10.05.75V4.24M.82 6.51H14"/><rect x=".75" y="2.32" width="13.32" height="11.68" rx="2.25"/></svg>
-      </div>
+      <div class="header-date">14–27 APR 2026</div>
       <div style="display:flex;align-items:baseline;gap:12px;margin-top:2px;">
         <div class="header-sub">Missing Recipes &mdash; All time overview</div>
         <a href="https://grain-tech.github.io/missing-recipes/" target="_blank" style="font-size:0.75rem;color:#9A9691;margin-left:auto;text-decoration:underline;text-underline-offset:2px;">grain-tech.github.io/missing-recipes</a>
@@ -770,8 +768,8 @@
           <div class="chart-tooltip-row"><span class="chart-tooltip-dot" style="background:var(--yellow)"></span>Submissions: ${DAILY_SUBS[idx]}</div>
           <div class="chart-tooltip-row"><span class="chart-tooltip-dot" style="background:var(--green)"></span>Matched: ${DAILY_MATCH[idx]}</div>`;
         tooltip.classList.add('show');
-        tooltip.style.left=`${cx*sx+8}px`;
-        tooltip.style.top=`${y(DAILY_VIEWS[idx])*(rect.height/200)-20}px`;
+        tooltip.style.left=`${rect.left+cx*sx+12}px`;
+        tooltip.style.top=`${rect.top+y(DAILY_VIEWS[idx])*(rect.height/200)-10}px`;
       });
       hoverRect.addEventListener('mouseleave',()=>{hoverLine.setAttribute('opacity','0');tooltip.classList.remove('show');});
     })();
