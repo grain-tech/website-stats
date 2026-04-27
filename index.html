@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Campaign Stats — Grain</title>
+  <title>Website Stats — Grain</title>
   <style>
     @font-face { font-family:'Kapra Neue'; font-weight:900; font-display:swap; src:url('fonts/KapraNeue-BlackExpanded.otf') format('opentype'); }
     @font-face { font-family:'Funkis A'; font-weight:300; font-display:swap; src:url('fonts/FunkisA-Light.woff2') format('woff2'), url('fonts/FunkisA-Light.woff') format('woff'); }
@@ -218,54 +218,78 @@
       box-shadow: none;
     }
 
-    /* ─── HERO ─── */
-    .hero {
-      padding: 8rem 2rem 4rem;
+    /* ─── PAGE HEADER ─── */
+    .page-header {
       max-width: 960px;
       margin: 0 auto;
-      text-align: center;
+      padding: 6rem 2rem 0;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
     }
 
-    .hero-overline {
-      font-size: 0.7rem;
-      font-weight: 500;
-      letter-spacing: 0.25em;
-      text-transform: uppercase;
-      color: var(--faded);
-      margin-bottom: 1rem;
-      opacity: 0;
-      transform: translateY(12px);
-      animation: fadeUp 0.6s ease 0.2s forwards;
+    .header-title-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
 
-    .hero-title {
+    .header-title {
       font-family: 'Kapra Neue', 'Funkis A', sans-serif;
       font-weight: 900;
-      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      font-size: 24px;
       text-transform: uppercase;
-      line-height: 1.05;
-      letter-spacing: -0.01em;
+      line-height: 1.5;
       color: var(--off-black);
-      margin-bottom: 1rem;
-      opacity: 0;
-      transform: translateY(16px);
-      animation: fadeUp 0.7s ease 0.35s forwards;
     }
 
-    .hero-title span {
-      color: var(--yellow);
+    .header-count {
+      background: var(--border);
+      border-radius: 5px;
+      padding: 3px 6px;
+      font-family: 'Funkis A', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--grey);
+      line-height: 1.25;
     }
 
-    .hero-sub {
-      font-size: 1.05rem;
+    .header-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .header-tabs {
+      display: flex;
+      align-items: center;
+    }
+
+    .header-tab {
+      padding: 12px 18px;
+      border-radius: 10px;
+      border: none;
+      background: none;
+      font-family: 'Funkis A', sans-serif;
+      font-size: 14px;
       font-weight: 400;
       color: var(--grey);
-      max-width: 440px;
-      margin: 0 auto;
-      line-height: 1.6;
-      opacity: 0;
-      transform: translateY(12px);
-      animation: fadeUp 0.6s ease 0.5s forwards;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .header-tab.active {
+      background: var(--filled-1, #F6F2EC);
+      font-weight: 600;
+      color: var(--off-black);
+    }
+
+    .header-tab:hover:not(.active) { color: var(--off-black); }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
 
     @keyframes fadeUp {
@@ -441,6 +465,62 @@
 
     .card-delete svg { width: 14px; height: 14px; }
 
+    /* ─── GLOBAL BAR ─── */
+    .global-bar {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .global-bar-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid var(--border);
+      gap: 1.5rem;
+    }
+
+    .global-bar-count {
+      font-family: 'Funkis A', sans-serif;
+      font-size: 14px;
+      color: var(--grey);
+      white-space: nowrap;
+    }
+
+    .global-bar-search {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--filled-1, #F6F2EC);
+      border-radius: 10px;
+      padding: 10px 18px;
+      width: 100%;
+      max-width: 500px;
+    }
+
+    .global-bar-search svg {
+      width: 16px;
+      height: 16px;
+      color: var(--grey);
+      flex-shrink: 0;
+    }
+
+    .global-bar-search input {
+      border: none;
+      background: none;
+      outline: none;
+      font-family: 'Funkis A', sans-serif;
+      font-size: 14px;
+      color: var(--off-black);
+      width: 100%;
+    }
+
+    .global-bar-search input::placeholder {
+      color: var(--grey);
+    }
+
     .card-kpi-label {
       font-size: 14px;
       font-weight: 500;
@@ -459,16 +539,27 @@
     <a class="nav-brand" href="/">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20.5441 0.00360107V7.28361C20.5441 8.78497 20.0076 10.2611 19.0967 11.4493C18.2687 12.5294 17.2102 13.3755 15.9392 13.8795C14.8159 14.38 13.3542 14.9093 13.293 14.9273C13.293 14.8768 13.293 14.8012 13.293 14.7616C13.293 12.3854 13.293 9.99831 13.3074 7.62924C13.347 5.62022 14.1391 3.91363 15.6116 2.53108C16.3605 1.8182 17.2066 1.39335 18.067 1.01891L20.5441 0.00720147V0.00360107Z"/><path d="M4.00745 9.40759C4.5475 9.61642 5.10195 9.78563 5.6096 10.0017C6.29007 10.2897 7.00294 10.5345 7.6366 10.9018C9.37917 11.9171 10.5277 13.4544 11.0353 15.4275C11.2046 16.0827 11.2694 16.7488 11.2658 17.4257C11.2622 19.5463 11.2658 21.6634 11.2658 23.784C11.2658 23.8524 11.2658 23.9208 11.2658 24C10.5817 23.9532 9.94443 23.802 9.33237 23.55C7.09295 22.6319 5.50519 21.0513 4.5727 18.819C4.19466 17.9081 4.01105 16.9612 4.01105 15.9819C4.01105 13.8577 4.01105 11.7046 4.01105 9.58041C4.01105 9.53001 4.01105 9.4832 4.01105 9.40399L4.00745 9.40759Z"/><path d="M11.2658 10.2575C10.9346 10.1387 10.6106 10.0343 10.3226 9.9263C9.47647 9.57346 8.68079 9.27102 7.84911 8.89298C6.14975 7.97128 4.93283 6.55993 4.34597 4.70212C4.10115 3.92803 3.99314 3.06034 4.00034 2.25025C4.00394 1.58418 4.00034 0.918101 4.00034 0.248427C4.00034 0.187221 4.00034 0.0864096 4.00034 0C4.27756 0.108012 4.56559 0.212423 4.81762 0.316835C5.6601 0.662473 6.54219 0.972107 7.35227 1.38255C8.93282 2.17824 10.0453 3.44558 10.7222 5.08376C11.111 6.02347 11.2839 7.00998 11.2658 8.02889V10.2575Z"/><path d="M20.544 14.0882C20.5332 14.9559 20.5944 16.4357 20.4 17.5626C20.0579 19.118 19.2299 20.5365 18.1174 21.6706C16.9904 22.8192 15.6007 23.5536 14.0238 23.9065C13.7609 23.9641 13.5881 23.9929 13.2965 23.9929C13.2965 23.568 13.2965 23.1792 13.2965 22.7904C13.2965 22.0163 13.2677 21.199 13.4261 20.4321C13.8257 18.4951 14.8626 16.9937 16.4648 15.8596C17.2641 15.3591 17.8401 15.1467 18.5782 14.8479C19.1759 14.6031 19.9319 14.2826 20.5476 14.0918"/></svg>
     </a>
-    <button class="nav-add">
-      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 1v12M1 7h12"/></svg>
-      New website
-    </button>
   </nav>
 
-  <section class="hero">
-    <h1 class="hero-title">Campaign <span>Stats</span></h1>
-    <p class="hero-sub">Track performance across all marketing campaigns. Pick one to dive in.</p>
-  </section>
+  <header class="page-header">
+    <div class="header-title-row">
+      <h1 class="header-title">Website Stats</h1>
+      <span class="header-count" id="campaignCount">3</span>
+    </div>
+    <div class="header-toolbar">
+      <div class="header-tabs">
+        <button class="header-tab active" data-filter="all">All</button>
+        <button class="header-tab" data-filter="live">Live</button>
+        <button class="header-tab" data-filter="ended">Ended</button>
+      </div>
+      <div class="header-actions">
+        <button class="nav-add" id="addWebsiteBtn">
+          <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 1v12M1 7h12"/></svg>
+          New website
+        </button>
+      </div>
+    </div>
+  </header>
 
   <section class="campaigns" id="campaigns"></section>
 
@@ -619,6 +710,25 @@
     }
     renderCustomCampaigns();
 
+    // ─── Tab filtering ───
+    document.querySelectorAll('.header-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.header-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        const filter = tab.dataset.filter;
+        document.querySelectorAll('.campaign-card').forEach(card => {
+          if (filter === 'all') { card.style.display = ''; return; }
+          const status = card.querySelector('.card-status');
+          const isLive = status && status.classList.contains('live');
+          card.style.display = (filter === 'live' && isLive) || (filter === 'ended' && !isLive) ? '' : 'none';
+        });
+      });
+    });
+
+    // Update count
+    const totalCampaigns = CAMPAIGNS.length + JSON.parse(localStorage.getItem('customCampaigns') || '[]').length;
+    document.getElementById('campaignCount').textContent = totalCampaigns;
+
     const observer = new IntersectionObserver(entries => {
       entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
     }, { threshold: 0.1 });
@@ -630,7 +740,7 @@
     const modalName = document.getElementById('modalName');
     const modalSubmit = document.getElementById('modalSubmit');
 
-    document.querySelector('.nav-add').addEventListener('click', () => {
+    document.getElementById('addWebsiteBtn').addEventListener('click', () => {
       modal.classList.add('open');
       setTimeout(() => modalUrl.focus(), 200);
     });
