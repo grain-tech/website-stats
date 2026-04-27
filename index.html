@@ -55,6 +55,7 @@
       border-bottom: 1px solid var(--border);
       gap: 16px;
       position: relative;
+      min-height: 60px;
     }
 
     .nav-brand {
@@ -107,6 +108,42 @@
 
     .header-btn-outline:hover { border-color: var(--grey); }
     .header-btn-outline svg { width: 14px; height: 14px; }
+
+    /* ─── DATE PICKER ─── */
+    .dp-wrap { position: relative; }
+    .dp-popover {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      z-index: 50;
+      background: #FBF7F3;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px;
+      width: 300px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+      opacity: 0;
+      pointer-events: none;
+      transform: translateY(-4px);
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .dp-popover.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
+    .dp-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    .dp-month { font-family: 'Funkis A', sans-serif; font-weight: 700; font-size: 14px; }
+    .dp-nav-btn { background: none; border: none; cursor: pointer; color: var(--text); padding: 4px; font-size: 1rem; border-radius: 4px; transition: background 0.15s; }
+    .dp-nav-btn:hover { background: var(--border); }
+    .dp-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; text-align: center; }
+    .dp-dow { font-size: 11px; font-weight: 600; color: var(--text); padding: 6px 0; }
+    .dp-cell { font-size: 13px; padding: 7px 0; border-radius: 50%; border: none; background: none; cursor: pointer; font-family: 'Funkis A', sans-serif; color: var(--text); transition: background 0.15s; }
+    .dp-cell:hover { background: var(--border); }
+    .dp-cell.today { background: var(--border); font-weight: 700; }
+    .dp-cell.selected { background: var(--yellow); font-weight: 700; }
+    .dp-cell.other { color: var(--grey-light); }
+    .dp-cell.future { color: var(--grey-light); cursor: default; }
+    .dp-cell.future:hover { background: none; }
+    .dp-foot { display: flex; justify-content: space-between; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+    .dp-clear { background: none; border: none; font-family: 'Funkis A', sans-serif; font-size: 13px; color: var(--text-muted); cursor: pointer; }
+    .dp-clear:hover { color: var(--text); }
 
     /* ─── MODAL ─── */
     .modal-overlay {
@@ -774,10 +811,23 @@
         <button class="header-tab" data-filter="ended">Ended</button>
       </div>
       <div class="header-actions">
-        <button class="header-btn-outline">
-          <svg viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4.78.75V4.24M10.05.75V4.24M.82 6.51H14"/><rect x=".75" y="2.32" width="13.32" height="11.68" rx="2.25"/></svg>
-          Pick a date
-        </button>
+        <div class="dp-wrap">
+          <button class="header-btn-outline" id="dpBtn">
+            <svg viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4.78.75V4.24M10.05.75V4.24M.82 6.51H14"/><rect x=".75" y="2.32" width="13.32" height="11.68" rx="2.25"/></svg>
+            Pick a date
+          </button>
+          <div class="dp-popover" id="dpPopover">
+            <div class="dp-head">
+              <button class="dp-nav-btn" id="dpPrev">&#8249;</button>
+              <span class="dp-month" id="dpMonth"></span>
+              <button class="dp-nav-btn" id="dpNext">&#8250;</button>
+            </div>
+            <div class="dp-grid" id="dpGrid"></div>
+            <div class="dp-foot">
+              <button class="dp-clear" id="dpClear">Clear</button>
+            </div>
+          </div>
+        </div>
         <button class="nav-add" id="addWebsiteBtn">
           <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 1v12M1 7h12"/></svg>
           New website
@@ -1028,6 +1078,46 @@
       document.getElementById('campaignCount').textContent = remaining;
       document.getElementById('totalCount').textContent = `Total websites (${remaining})`;
     });
+
+    // ─── Date picker ───
+    (function(){
+      const btn=document.getElementById('dpBtn');
+      const pop=document.getElementById('dpPopover');
+      if(!btn||!pop)return;
+      let cur=new Date();const today=new Date();
+      const grid=document.getElementById('dpGrid');
+      const monthEl=document.getElementById('dpMonth');
+
+      function render(){
+        const y=cur.getFullYear(),m=cur.getMonth();
+        monthEl.textContent=cur.toLocaleString('en-GB',{month:'long',year:'numeric'});
+        grid.innerHTML='';
+        ['S','M','T','W','T','F','S'].forEach(d=>{grid.innerHTML+=`<div class="dp-dow">${d}</div>`;});
+        const first=new Date(y,m,1).getDay();
+        const days=new Date(y,m+1,0).getDate();
+        const prevDays=new Date(y,m,0).getDate();
+        for(let i=first-1;i>=0;i--){grid.innerHTML+=`<button class="dp-cell other">${prevDays-i}</button>`;}
+        for(let d=1;d<=days;d++){
+          const isToday=d===today.getDate()&&m===today.getMonth()&&y===today.getFullYear();
+          const isFuture=new Date(y,m,d)>today;
+          grid.innerHTML+=`<button class="dp-cell${isToday?' today':''}${isFuture?' future':''}" data-day="${d}">${d}</button>`;
+        }
+        const rem=(first+days)%7;if(rem>0)for(let d=1;d<=7-rem;d++){grid.innerHTML+=`<button class="dp-cell other">${d}</button>`;}
+        grid.querySelectorAll('.dp-cell[data-day]').forEach(b=>{
+          if(b.classList.contains('future'))return;
+          b.addEventListener('click',()=>{
+            grid.querySelectorAll('.dp-cell').forEach(c=>c.classList.remove('selected'));
+            b.classList.add('selected');
+          });
+        });
+      }
+
+      btn.addEventListener('click',e=>{e.stopPropagation();pop.classList.toggle('open');render();});
+      document.getElementById('dpPrev').addEventListener('click',e=>{e.stopPropagation();cur.setMonth(cur.getMonth()-1);render();});
+      document.getElementById('dpNext').addEventListener('click',e=>{e.stopPropagation();cur.setMonth(cur.getMonth()+1);render();});
+      document.getElementById('dpClear').addEventListener('click',e=>{e.stopPropagation();pop.classList.remove('open');});
+      document.addEventListener('click',e=>{if(!pop.contains(e.target)&&e.target!==btn&&!btn.contains(e.target))pop.classList.remove('open');});
+    })();
 
     document.getElementById('addWebsiteBtn').addEventListener('click', () => {
       modal.classList.add('open');
