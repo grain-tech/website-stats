@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Missing Recipes Stats — Grain</title>
+  <style>
+    @font-face { font-family:'Kapra Neue'; font-weight:900; font-display:swap; src:url('fonts/KapraNeue-BlackExpanded.otf') format('opentype'); }
+    @font-face { font-family:'Funkis A'; font-weight:300; font-display:swap; src:url('fonts/FunkisA-Light.woff2') format('woff2'), url('fonts/FunkisA-Light.woff') format('woff'); }
+    @font-face { font-family:'Funkis A'; font-weight:400; font-display:swap; src:url('fonts/FunkisA-Regular.woff2') format('woff2'), url('fonts/FunkisA-Regular.woff') format('woff'); }
+    @font-face { font-family:'Funkis A'; font-weight:500; font-display:swap; src:url('fonts/FunkisA-Medium.woff2') format('woff2'), url('fonts/FunkisA-Medium.woff') format('woff'); }
+    @font-face { font-family:'Funkis A'; font-weight:700; font-display:swap; src:url('fonts/FunkisA-Bold.woff2') format('woff2'), url('fonts/FunkisA-Bold.woff') format('woff'); }
+
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+    :root {
+      --bg: #f5f3f0;
+      --card: #ffffff;
+      --border: #e5e2dd;
+      --text: #1a1a1a;
+      --text-secondary: #6b6560;
+      --text-muted: #9a9590;
+      --yellow: #f2c744;
+      --yellow-bg: #fef9e7;
+      --green: #4caf50;
+      --green-light: #81c784;
+      --green-dark: #2e7d32;
+      --red: #e53935;
+      --orange: #fb8c00;
+      --purple: #ab47bc;
+      --blue: #42a5f5;
+      --grey-line: #c5c0ba;
+      --radius: 8px;
+    }
+
+    body {
+      font-family: 'Funkis A', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ─── NAV ─── */
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding: 0.9rem 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-brand {
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+    }
+
+    .nav-sep { width: 1px; height: 16px; background: var(--border); }
+
+    .nav-back {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.2s;
+    }
+    .nav-back:hover { color: var(--text); }
+    .nav-back svg { width: 14px; height: 14px; }
+
+    .nav-right {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-live {
+      width: 6px; height: 6px;
+      background: #2e7d32;
+      border-radius: 50%;
+      animation: pulse 2s ease infinite;
+    }
+
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+    .nav-updated { font-size: 0.7rem; color: var(--text-muted); }
+
+    /* ─── PAGE HEADER ─── */
+    .page-header {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 1.75rem 2rem 0;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .header-date {
+      font-family: 'Kapra Neue', sans-serif;
+      font-weight: 900;
+      font-size: 1.5rem;
+      line-height: 1.2;
+    }
+
+    .header-sub {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      background: var(--card);
+      color: var(--text);
+      font-family: 'Funkis A', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      transition: border-color 0.2s;
+    }
+
+    .btn:hover { border-color: var(--text-muted); }
+
+    .btn svg { width: 16px; height: 16px; }
+
+    /* ─── DASHBOARD ─── */
+    .dashboard {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 1.5rem 2rem 3rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    /* ─── KPI ROW ─── */
+    .kpi-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 0.75rem;
+    }
+
+    .kpi-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.1rem 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      opacity: 0; transform: translateY(10px);
+    }
+
+    .kpi-card.highlight {
+      background: var(--yellow-bg);
+      border-color: #e8dbb0;
+    }
+
+    .kpi-card.visible { animation: fadeUp 0.45s ease forwards; }
+
+    .kpi-label {
+      font-size: 0.65rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-secondary);
+    }
+
+    .kpi-value {
+      font-family: 'Kapra Neue', 'Funkis A', sans-serif;
+      font-weight: 900;
+      font-size: 2rem;
+      line-height: 1;
+    }
+
+    .kpi-sub {
+      font-size: 0.68rem;
+      font-weight: 500;
+    }
+
+    .kpi-sub.up { color: var(--green-dark); }
+    .kpi-sub.down { color: var(--red); }
+
+    @keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+
+    /* ─── CARD ─── */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      opacity: 0; transform: translateY(10px);
+    }
+
+    .card.visible { animation: fadeUp 0.45s ease forwards; }
+
+    .card-title {
+      font-family: 'Kapra Neue', 'Funkis A', sans-serif;
+      font-weight: 900;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      margin-bottom: 1rem;
+    }
+
+    .card-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+
+    .chart-legend {
+      display: flex;
+      gap: 1rem;
+      font-size: 0.7rem;
+      color: var(--text-secondary);
+    }
+
+    .chart-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .chart-legend-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+    }
+
+    /* ─── GRID ─── */
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
+    .grid-2-1 { display: grid; grid-template-columns: 2fr 1fr; gap: 1rem; }
+    @media(max-width:800px) { .grid-2,.grid-3,.grid-2-1 { grid-template-columns:1fr; } }
+
+    /* ─── LINE CHART ─── */
+    .lc-svg { width:100%; height:auto; }
+    .lc-grid { stroke: #eae8e4; stroke-width: 0.5; }
+    .lc-label { fill: var(--text-muted); font-family: 'Funkis A', sans-serif; font-size: 9px; }
+    .lc-area-views { fill: rgba(197,192,186,0.15); }
+    .lc-area-started { fill: rgba(242,199,68,0.12); }
+    .lc-area-completed { fill: rgba(76,175,80,0.1); }
+    .lc-line-views { fill:none; stroke: var(--grey-line); stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round; }
+    .lc-line-started { fill:none; stroke: var(--yellow); stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round; }
+    .lc-line-completed { fill:none; stroke: var(--green); stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round; }
+
+    /* ─── DONUT ─── */
+    .donut-container { display:flex; flex-direction:column; align-items:center; gap:1rem; }
+    .donut-ring { position:relative; width:160px; height:160px; }
+    .donut-svg { width:100%; height:100%; transform:rotate(-90deg); }
+    .donut-center {
+      position:absolute; inset:0; display:flex; flex-direction:column;
+      align-items:center; justify-content:center;
+    }
+    .donut-total { font-family:'Kapra Neue','Funkis A',sans-serif; font-weight:900; font-size:1.8rem; line-height:1; }
+    .donut-total-label { font-size:0.65rem; color:var(--text-muted); }
+
+    .donut-legend {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.4rem 1.5rem;
+      width: 100%;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+    }
+
+    .legend-img { width:24px; height:24px; border-radius:50%; object-fit:contain; flex-shrink:0; background:#f5f3f0; }
+    .legend-name { color: var(--text-secondary); flex:1; }
+    .legend-val { font-weight: 700; font-variant-numeric: tabular-nums; }
+
+    /* ─── DEVICE DONUT ─── */
+    .device-row {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .device-ring { position:relative; width:80px; height:80px; flex-shrink:0; }
+    .device-center {
+      position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+      font-family:'Kapra Neue','Funkis A',sans-serif; font-weight:900; font-size:1rem;
+    }
+
+    .device-legend { display:flex; flex-direction:column; gap:0.5rem; }
+    .device-legend-item { display:flex; align-items:center; gap:8px; font-size:0.8rem; }
+    .device-legend-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+    .device-legend-val { font-weight:700; font-variant-numeric:tabular-nums; margin-left:auto; }
+    .device-legend-pct { color:var(--text-muted); font-size:0.75rem; }
+
+    /* ─── REFERRAL LIST ─── */
+    .ref-list { display:flex; flex-direction:column; gap:0.6rem; }
+    .ref-item { display:grid; grid-template-columns:16px 1fr auto 50px; align-items:center; gap:0.5rem; }
+    .ref-rank { font-size:0.7rem; color:var(--text-muted); font-variant-numeric:tabular-nums; }
+    .ref-name { font-size:0.8rem; }
+    .ref-bar { height:6px; border-radius:3px; min-width:20px; }
+    .ref-val { font-size:0.8rem; font-weight:700; text-align:right; font-variant-numeric:tabular-nums; }
+
+    /* ─── OUTBOUND CLICKS ─── */
+    .outbound-list { display:flex; flex-direction:column; gap:1rem; }
+    .outbound-item { display:flex; align-items:baseline; justify-content:space-between; gap:1rem; }
+    .outbound-label { font-size:0.85rem; font-weight:500; }
+    .outbound-url { font-size:0.7rem; color:var(--text-muted); }
+    .outbound-val { font-family:'Kapra Neue','Funkis A',sans-serif; font-weight:900; font-size:1.5rem; }
+
+    /* ─── FUNNEL ─── */
+    .funnel-desc {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      margin-bottom: 1rem;
+      line-height: 1.5;
+    }
+
+    .funnel-overall {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--green-dark);
+      float: right;
+      margin-top: -0.5rem;
+    }
+
+    .funnel { display:flex; flex-direction:column; gap:0; }
+    .funnel-step { display:grid; grid-template-columns:1fr 60px; align-items:center; gap:0.75rem; }
+    .funnel-bar-wrap { height:36px; border-radius:6px; overflow:hidden; position:relative; }
+    .funnel-bar {
+      position:absolute; inset:0; border-radius:6px;
+      display:flex; align-items:center; padding:0 0.85rem;
+      font-size:0.78rem; font-weight:500; color:var(--text);
+      transition:width 1.2s cubic-bezier(0.22,0.61,0.36,1); width:0;
+    }
+    .funnel-val { font-family:'Kapra Neue','Funkis A',sans-serif; font-weight:900; font-size:0.95rem; text-align:right; }
+    .funnel-arrow { display:flex; justify-content:center; padding:1px 0 1px 1.5rem; color:var(--text-muted); }
+    .funnel-drop { font-size:0.65rem; color:var(--text-muted); margin-left:auto; padding-left:0.5rem; }
+    .funnel-pct { font-size:0.65rem; color:var(--text-muted); margin-left:auto; padding-left:0.5rem; }
+
+    /* ─── BAR CHART ─── */
+    .bar-row { display:grid; grid-template-columns:120px 1fr 40px; align-items:center; gap:0.6rem; margin-bottom:0.55rem; }
+    .bar-row:last-child { margin-bottom:0; }
+    .bar-label { font-size:0.8rem; font-weight:500; }
+    .bar-track { height:20px; background:#f0ede9; border-radius:4px; overflow:hidden; }
+    .bar-fill { height:100%; border-radius:4px; transition:width 1.2s cubic-bezier(0.22,0.61,0.36,1); width:0; }
+    .bar-val { font-size:0.8rem; font-weight:700; text-align:right; font-variant-numeric:tabular-nums; }
+
+    /* ─── TABLE ─── */
+    .stat-table { width:100%; border-collapse:collapse; }
+    .stat-table th { font-size:0.6rem; font-weight:500; text-transform:uppercase; letter-spacing:0.04em; color:var(--text-muted); text-align:left; padding:0 0 0.5rem; border-bottom:1px solid var(--border); }
+    .stat-table th:last-child, .stat-table td:last-child { text-align:right; }
+    .stat-table td { font-size:0.8rem; padding:0.5rem 0; border-bottom:1px solid #f0ede9; color:var(--text-secondary); }
+    .stat-table tr:last-child td { border-bottom:none; }
+  </style>
+</head>
+<body>
+
+  <nav class="nav">
+    <a class="nav-brand" href="/">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="#1a1a1a"><path d="M20.5441 0.00360107V7.28361C20.5441 8.78497 20.0076 10.2611 19.0967 11.4493C18.2687 12.5294 17.2102 13.3755 15.9392 13.8795C14.8159 14.38 13.3542 14.9093 13.293 14.9273C13.293 14.8768 13.293 14.8012 13.293 14.7616C13.293 12.3854 13.293 9.99831 13.3074 7.62924C13.347 5.62022 14.1391 3.91363 15.6116 2.53108C16.3605 1.8182 17.2066 1.39335 18.067 1.01891L20.5441 0.00720147V0.00360107Z"/><path d="M4.00745 9.40759C4.5475 9.61642 5.10195 9.78563 5.6096 10.0017C6.29007 10.2897 7.00294 10.5345 7.6366 10.9018C9.37917 11.9171 10.5277 13.4544 11.0353 15.4275C11.2046 16.0827 11.2694 16.7488 11.2658 17.4257C11.2622 19.5463 11.2658 21.6634 11.2658 23.784C11.2658 23.8524 11.2658 23.9208 11.2658 24C10.5817 23.9532 9.94443 23.802 9.33237 23.55C7.09295 22.6319 5.50519 21.0513 4.5727 18.819C4.19466 17.9081 4.01105 16.9612 4.01105 15.9819C4.01105 13.8577 4.01105 11.7046 4.01105 9.58041C4.01105 9.53001 4.01105 9.4832 4.01105 9.40399L4.00745 9.40759Z"/><path d="M11.2658 10.2575C10.9346 10.1387 10.6106 10.0343 10.3226 9.9263C9.47647 9.57346 8.68079 9.27102 7.84911 8.89298C6.14975 7.97128 4.93283 6.55993 4.34597 4.70212C4.10115 3.92803 3.99314 3.06034 4.00034 2.25025C4.00394 1.58418 4.00034 0.918101 4.00034 0.248427C4.00034 0.187221 4.00034 0.0864096 4.00034 0C4.27756 0.108012 4.56559 0.212423 4.81762 0.316835C5.6601 0.662473 6.54219 0.972107 7.35227 1.38255C8.93282 2.17824 10.0453 3.44558 10.7222 5.08376C11.111 6.02347 11.2839 7.00998 11.2658 8.02889V10.2575Z"/><path d="M20.544 14.0882C20.5332 14.9559 20.5944 16.4357 20.4 17.5626C20.0579 19.118 19.2299 20.5365 18.1174 21.6706C16.9904 22.8192 15.6007 23.5536 14.0238 23.9065C13.7609 23.9641 13.5881 23.9929 13.2965 23.9929C13.2965 23.568 13.2965 23.1792 13.2965 22.7904C13.2965 22.0163 13.2677 21.199 13.4261 20.4321C13.8257 18.4951 14.8626 16.9937 16.4648 15.8596C17.2641 15.3591 17.8401 15.1467 18.5782 14.8479C19.1759 14.6031 19.9319 14.2826 20.5476 14.0918"/></svg>
+    </a>
+    <span class="nav-sep"></span>
+    <a class="nav-back" href="index.html">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 3L5 8l5 5"/></svg>
+      All Campaigns
+    </a>
+    <div class="nav-right">
+      <span class="nav-live"></span>
+      <span class="nav-updated" id="navUpdated">Updated just now</span>
+    </div>
+  </nav>
+
+  <header class="page-header">
+    <div>
+      <div class="header-date">27 Apr 2026</div>
+      <div class="header-sub">Missing Recipes &mdash; All time overview</div>
+    </div>
+    <div class="header-actions">
+      <button class="btn">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="2" y="2" width="12" height="12" rx="2"/><path d="M2 6h12M5 2v4M11 2v4"/></svg>
+        Pick a date
+      </button>
+      <a class="btn" href="#">View campaign</a>
+    </div>
+  </header>
+
+  <main class="dashboard">
+
+    <!-- KPIs -->
+    <section class="kpi-row" id="kpiRow"></section>
+
+    <!-- Visitor Trend + Recipe Popularity donut -->
+    <div class="grid-2-1">
+      <section class="card" id="trendCard">
+        <div class="card-title-row">
+          <h2 class="card-title">Visitor Trend</h2>
+          <div class="chart-legend">
+            <span class="chart-legend-item"><span class="chart-legend-dot" style="background:var(--grey-line)"></span>Views</span>
+            <span class="chart-legend-item"><span class="chart-legend-dot" style="background:var(--yellow)"></span>Submissions</span>
+            <span class="chart-legend-item"><span class="chart-legend-dot" style="background:var(--green)"></span>Matched</span>
+          </div>
+        </div>
+        <svg class="lc-svg" id="lineChart" viewBox="0 0 600 200" preserveAspectRatio="xMidYMid meet"></svg>
+      </section>
+      <section class="card" id="recipeSplitCard">
+        <h2 class="card-title">Recipe Split</h2>
+        <div class="donut-container">
+          <div class="donut-ring">
+            <svg class="donut-svg" viewBox="0 0 36 36" id="recipeDonut"></svg>
+            <div class="donut-center">
+              <span class="donut-total">1,664</span>
+              <span class="donut-total-label">matched</span>
+            </div>
+          </div>
+          <div class="donut-legend" id="recipeLegend"></div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Devices + Where They Came From + Outbound -->
+    <div class="grid-3">
+      <section class="card" id="deviceCard">
+        <h2 class="card-title">Devices</h2>
+        <div class="device-row" id="deviceContent"></div>
+      </section>
+      <section class="card" id="refCard">
+        <h2 class="card-title">Where They Came From</h2>
+        <div class="ref-list" id="refList"></div>
+      </section>
+      <section class="card" id="outboundCard">
+        <h2 class="card-title">Outbound Clicks</h2>
+        <div class="outbound-list" id="outboundList"></div>
+      </section>
+    </div>
+
+    <!-- Funnel -->
+    <section class="card" id="funnelCard">
+      <div class="card-title-row">
+        <h2 class="card-title">How Far Did People Get?</h2>
+        <span class="funnel-overall" id="funnelOverall">18.5% overall</span>
+      </div>
+      <p class="funnel-desc">A big drop between steps means that step might need work.</p>
+      <div class="funnel" id="funnel"></div>
+    </section>
+
+    <!-- Recipe bars + Traffic donut -->
+    <div class="grid-2">
+      <section class="card" id="recipeBarCard">
+        <h2 class="card-title">Recipe Popularity</h2>
+        <div id="recipeBarChart"></div>
+      </section>
+      <section class="card" id="failedCard">
+        <h2 class="card-title">Failed Guesses</h2>
+        <table class="stat-table">
+          <thead><tr><th>Input</th><th>Count</th></tr></thead>
+          <tbody id="failedBody"></tbody>
+        </table>
+      </section>
+    </div>
+
+  </main>
+
+  <script>
+    // ─── HELPERS ───
+    const ns='http://www.w3.org/2000/svg';
+    const svgEl=(tag,attrs)=>{const e=document.createElementNS(ns,tag);for(const[k,v]of Object.entries(attrs||{}))e.setAttribute(k,v);return e;};
+    function countUp(el,target,suffix,dur=1000){const s=performance.now();(function t(now){const p=Math.min((now-s)/dur,1);const ease=1-Math.pow(1-p,3);el.textContent=Math.round(target*ease).toLocaleString()+suffix;if(p<1)requestAnimationFrame(t);})(performance.now());}
+
+    // ─── DATA ───
+    const KPI=[
+      {label:'Page Views',value:4827,suffix:'',change:'+18% vs last week',dir:'up'},
+      {label:'Submissions',value:2134,suffix:'',change:'+12% vs last week',dir:'up'},
+      {label:'Matched',value:1664,suffix:'',change:'+22% vs last week',dir:'up'},
+      {label:'Match Rate',value:78,suffix:'%',change:'+3pp vs last week',dir:'up',highlight:true},
+      {label:'Code Copies',value:893,suffix:'',change:'+9% vs last week',dir:'up'},
+    ];
+
+    const DAILY_VIEWS=[180,195,210,240,280,420,520,460,340,290,310,380,430,480];
+    const DAILY_SUBS= [60,75,85,100,130,220,280,240,160,120,140,180,210,250];
+    const DAILY_MATCH=[40,50,60,72,95,170,220,185,120,90,105,140,165,200];
+    const DAY_LABELS=['14 Apr','15 Apr','16 Apr','17 Apr','18 Apr','19 Apr','20 Apr','21 Apr','22 Apr','23 Apr','24 Apr','25 Apr','26 Apr','27 Apr'];
+
+    const RECIPE_SPLIT=[
+      {name:'The PB&J',count:487,color:'var(--yellow)',img:'assets/dishes/pbj.jpg'},
+      {name:'Antipasti Focaccia',count:412,color:'var(--orange)',img:'assets/dishes/antipasti.jpg'},
+      {name:'Confit Salmon',count:356,color:'var(--green)',img:'assets/dishes/salmon.jpg'},
+      {name:'Lotus Root',count:298,color:'var(--purple)',img:'assets/dishes/lotus.jpg'},
+      {name:'San Bei Chicken',count:111,color:'var(--red)',img:'assets/dishes/sanbei.jpg'},
+    ];
+
+    const DEVICES=[
+      {name:'Mobile',count:3286,pct:'68%',color:'var(--yellow)'},
+      {name:'Desktop',count:1158,pct:'24%',color:'var(--grey-line)'},
+      {name:'Tablet',count:383,pct:'8%',color:'#e0dcd7'},
+    ];
+
+    const REFERRERS=[
+      {name:'direct',count:1890,color:'var(--yellow)'},
+      {name:'grain.com.sg',count:1240,color:'var(--yellow)'},
+      {name:'l.instagram.com',count:820,color:'var(--yellow)'},
+      {name:'wa.me',count:450,color:'#e8dbb0'},
+      {name:'t.co',count:280,color:'#e8dbb0'},
+      {name:'m.facebook.com',count:147,color:'#e5e2dd'},
+    ];
+
+    const OUTBOUND=[
+      {label:'Book your buffet',url:'grain.com.sg/whats-cooking-june-26',count:312},
+      {label:'Copy code clicks',url:'FOUNDIT10 clipboard',count:893},
+    ];
+
+    const FUNNEL=[
+      {label:'Page Views',value:4827,color:'#d5cfc5'},
+      {label:'Typed a Guess',value:2134,color:'#ddd5b8'},
+      {label:'Matched Recipe',value:1664,color:'#e2d9a8'},
+      {label:'Scrolled to Reward',value:1412,color:'#e8dd98'},
+      {label:'Copied Code',value:893,color:'#f2c744'},
+    ];
+
+    const RECIPES_BAR=[
+      {name:'The PB&J',count:487,color:'var(--yellow)'},
+      {name:'Antipasti Focaccia',count:412,color:'var(--orange)'},
+      {name:'Confit Salmon',count:356,color:'var(--blue)'},
+      {name:'Lotus Root',count:298,color:'var(--green)'},
+      {name:'San Bei Chicken',count:271,color:'var(--purple)'},
+    ];
+
+    const FAILED=[
+      {input:'peanut butter jelly',count:34},
+      {input:'fried rice',count:28},
+      {input:'pasta',count:22},
+      {input:'nasi lemak',count:18},
+      {input:'curry',count:15},
+      {input:'ramen',count:12},
+      {input:'test',count:11},
+      {input:'hello',count:9},
+    ];
+
+    // ─── KPIs ───
+    (function(){
+      const row=document.getElementById('kpiRow');
+      KPI.forEach((k,i)=>{
+        const d=document.createElement('div');
+        d.className='kpi-card'+(k.highlight?' highlight':'');
+        d.style.animationDelay=`${i*0.06}s`;
+        d.innerHTML=`<span class="kpi-label">${k.label}</span><span class="kpi-value" data-count="${k.value}" data-suffix="${k.suffix}">0</span><span class="kpi-sub ${k.dir}">${k.change}</span>`;
+        row.appendChild(d);
+      });
+    })();
+
+    // ─── LINE CHART (multi-line) ───
+    (function(){
+      const svg=document.getElementById('lineChart');
+      const pad={t:10,r:10,b:24,l:36};
+      const W=600-pad.l-pad.r,H=200-pad.t-pad.b;
+      const allMax=Math.max(...DAILY_VIEWS)*1.15;
+      const x=i=>pad.l+(i/(DAILY_VIEWS.length-1))*W;
+      const y=v=>pad.t+H-(v/allMax)*H;
+
+      // Grid
+      for(let i=0;i<5;i++){
+        const val=Math.round((i/4)*allMax);
+        svg.appendChild(svgEl('line',{x1:pad.l,x2:600-pad.r,y1:y(val),y2:y(val),class:'lc-grid'}));
+        const lbl=svgEl('text',{x:pad.l-6,y:y(val)+3,'text-anchor':'end',class:'lc-label'});
+        lbl.textContent=val;svg.appendChild(lbl);
+      }
+      DAY_LABELS.forEach((d,i)=>{
+        if(i%2!==0&&i!==DAY_LABELS.length-1)return;
+        const lbl=svgEl('text',{x:x(i),y:200-4,'text-anchor':'middle',class:'lc-label'});
+        lbl.textContent=d;svg.appendChild(lbl);
+      });
+
+      function makeLine(data,areaClass,lineClass){
+        const pts=data.map((v,i)=>`${x(i)},${y(v)}`).join(' ');
+        svg.appendChild(svgEl('polygon',{points:`${x(0)},${y(0)} ${pts} ${x(data.length-1)},${y(0)}`,class:areaClass}));
+        svg.appendChild(svgEl('polyline',{points:pts,class:lineClass}));
+      }
+      makeLine(DAILY_VIEWS,'lc-area-views','lc-line-views');
+      makeLine(DAILY_SUBS,'lc-area-started','lc-line-started');
+      makeLine(DAILY_MATCH,'lc-area-completed','lc-line-completed');
+    })();
+
+    // ─── RECIPE SPLIT DONUT ───
+    (function(){
+      const svg=document.getElementById('recipeDonut');
+      const legend=document.getElementById('recipeLegend');
+      const R=15.915;let offset=0;const total=RECIPE_SPLIT.reduce((s,r)=>s+r.count,0);
+      RECIPE_SPLIT.forEach(d=>{
+        const circ=2*Math.PI*R;const dash=(d.count/total)*circ;
+        svg.appendChild(svgEl('circle',{cx:18,cy:18,r:R,fill:'none',stroke:d.color,'stroke-width':4,'stroke-dasharray':`${dash} ${circ-dash}`,'stroke-dashoffset':-offset,'stroke-linecap':'round'}));
+        offset+=dash;
+        legend.innerHTML+=`<div class="legend-item"><img class="legend-img" src="${d.img}" alt="${d.name}"/><span class="legend-name">${d.name}</span><span class="legend-val">${d.count}</span></div>`;
+      });
+    })();
+
+    // ─── DEVICES ───
+    (function(){
+      const el=document.getElementById('deviceContent');
+      const total=DEVICES.reduce((s,d)=>s+d.count,0);
+      let donutSvg=`<div class="device-ring"><svg class="donut-svg" viewBox="0 0 36 36">`;
+      const R=15.915;let offset=0;
+      DEVICES.forEach(d=>{
+        const circ=2*Math.PI*R;const dash=(d.count/total)*circ;
+        donutSvg+=`<circle cx="18" cy="18" r="${R}" fill="none" stroke="${d.color}" stroke-width="4" stroke-dasharray="${dash} ${circ-dash}" stroke-dashoffset="${-offset}"/>`;
+        offset+=dash;
+      });
+      donutSvg+=`</svg><div class="device-center">${total.toLocaleString()}</div></div>`;
+
+      let legendHtml='<div class="device-legend">';
+      DEVICES.forEach(d=>{
+        legendHtml+=`<div class="device-legend-item"><span class="device-legend-dot" style="background:${d.color}"></span><span>${d.name}</span><span class="device-legend-val">${d.count.toLocaleString()}</span><span class="device-legend-pct">(${d.pct})</span></div>`;
+      });
+      legendHtml+='</div>';
+      el.innerHTML=donutSvg+legendHtml;
+    })();
+
+    // ─── REFERRERS ───
+    (function(){
+      const el=document.getElementById('refList');
+      const max=REFERRERS[0].count;
+      REFERRERS.forEach((r,i)=>{
+        const w=Math.max((r.count/max)*100,8);
+        el.innerHTML+=`<div class="ref-item"><span class="ref-rank">${i+1}</span><span class="ref-name">${r.name}</span><div class="ref-bar" style="width:${w}%;background:${r.color}"></div><span class="ref-val">${r.count.toLocaleString()}</span></div>`;
+      });
+    })();
+
+    // ─── OUTBOUND ───
+    (function(){
+      const el=document.getElementById('outboundList');
+      OUTBOUND.forEach(o=>{
+        el.innerHTML+=`<div class="outbound-item"><div><div class="outbound-label">${o.label}</div><div class="outbound-url">${o.url}</div></div><div class="outbound-val">${o.count}</div></div>`;
+      });
+    })();
+
+    // ─── FUNNEL ───
+    (function(){
+      const el=document.getElementById('funnel');
+      const maxV=FUNNEL[0].value;
+      FUNNEL.forEach((s,i)=>{
+        if(i>0)el.innerHTML+=`<div class="funnel-arrow"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M6 1v8M3 7l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></div>`;
+        const pct=(s.value/maxV*100).toFixed(1);
+        const drop=i>0?`-${((1-s.value/FUNNEL[i-1].value)*100).toFixed(0)}%`:'';
+        const stepPct=((s.value/maxV)*100).toFixed(0);
+        el.innerHTML+=`<div class="funnel-step"><div class="funnel-bar-wrap"><div class="funnel-bar" style="background:${s.color}" data-width="${pct}%">${s.label}${drop?`<span class="funnel-drop">${drop}</span>`:''}</div></div><span class="funnel-val">${s.value.toLocaleString()}</span></div>`;
+      });
+    })();
+
+    // ─── RECIPE BARS ───
+    (function(){
+      const el=document.getElementById('recipeBarChart');
+      const max=Math.max(...RECIPES_BAR.map(r=>r.count));
+      RECIPES_BAR.forEach(r=>{
+        el.innerHTML+=`<div class="bar-row"><span class="bar-label">${r.name}</span><div class="bar-track"><div class="bar-fill" style="background:${r.color}" data-width="${(r.count/max*100).toFixed(1)}%"></div></div><span class="bar-val">${r.count}</span></div>`;
+      });
+    })();
+
+    // ─── FAILED ───
+    (function(){
+      const tbody=document.getElementById('failedBody');
+      FAILED.forEach(f=>{
+        tbody.innerHTML+=`<tr><td>"${f.input}"</td><td>${f.count}</td></tr>`;
+      });
+    })();
+
+    // ─── SCROLL ANIMATIONS ───
+    const io=new IntersectionObserver(entries=>{entries.forEach(e=>{if(!e.isIntersecting)return;e.target.classList.add('visible');io.unobserve(e.target);e.target.querySelectorAll('.bar-fill[data-width]').forEach(b=>{b.style.width=b.dataset.width;});e.target.querySelectorAll('.funnel-bar[data-width]').forEach(b=>{b.style.width=b.dataset.width;});const c=e.target.querySelector('.kpi-value[data-count]');if(c)countUp(c,+c.dataset.count,c.dataset.suffix||'');});},{threshold:0.12});
+    document.querySelectorAll('.kpi-card,.card').forEach(el=>io.observe(el));
+    document.querySelectorAll('.kpi-card').forEach((c,i)=>{c.style.animationDelay=`${i*0.06}s`;});
+    document.querySelectorAll('.card').forEach((c,i)=>{c.style.animationDelay=`${i*0.04}s`;});
+
+    // Nav timestamp
+    const el=document.getElementById('navUpdated');
+    if(el) el.textContent='Updated '+new Date().toLocaleTimeString('en-SG',{hour:'2-digit',minute:'2-digit'});
+  </script>
+</body>
+</html>

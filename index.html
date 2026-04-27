@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Campaign Stats — Grain</title>
+  <style>
+    @font-face { font-family:'Kapra Neue'; font-weight:900; font-display:swap; src:url('fonts/KapraNeue-BlackExpanded.otf') format('opentype'); }
+    @font-face { font-family:'Funkis A'; font-weight:300; font-display:swap; src:url('fonts/FunkisA-Light.woff2') format('woff2'), url('fonts/FunkisA-Light.woff') format('woff'); }
+    @font-face { font-family:'Funkis A'; font-weight:400; font-display:swap; src:url('fonts/FunkisA-Regular.woff2') format('woff2'), url('fonts/FunkisA-Regular.woff') format('woff'); }
+    @font-face { font-family:'Funkis A'; font-weight:500; font-display:swap; src:url('fonts/FunkisA-Medium.woff2') format('woff2'), url('fonts/FunkisA-Medium.woff') format('woff'); }
+    @font-face { font-family:'Funkis A'; font-weight:700; font-display:swap; src:url('fonts/FunkisA-Bold.woff2') format('woff2'), url('fonts/FunkisA-Bold.woff') format('woff'); }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black: #0d0d0d;
+      --off-black: #1a1a1a;
+      --white: #ffffff;
+      --bg: #f7f5f2;
+      --card-bg: #ffffff;
+      --yellow: #fecc07;
+      --yellow-dark: #d4a906;
+      --ink: #1a1a1a;
+      --faded: #8a8070;
+      --grey: #9a9691;
+      --grey-light: #e0dcd7;
+      --border: rgba(0,0,0,0.08);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Funkis A', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--off-black);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ─── LOGOMARK ─── */
+    .logomark { width: 22px; height: 22px; display: block; }
+
+    /* ─── NAV ─── */
+    .nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 1.25rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(247,245,242,0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      color: var(--off-black);
+    }
+
+    .nav-add {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 12px 20px 12px 18px;
+      background: var(--yellow);
+      border: none;
+      border-radius: 10px;
+      font-family: 'Funkis A', sans-serif;
+      font-weight: 700;
+      font-size: 0.875rem;
+      color: var(--off-black);
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .nav-add:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(254,204,7,0.4);
+    }
+
+    .nav-add svg { width: 14px; height: 14px; }
+
+    /* ─── HERO ─── */
+    .hero {
+      padding: 8rem 2rem 4rem;
+      max-width: 960px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .hero-overline {
+      font-size: 0.7rem;
+      font-weight: 500;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--faded);
+      margin-bottom: 1rem;
+      opacity: 0;
+      transform: translateY(12px);
+      animation: fadeUp 0.6s ease 0.2s forwards;
+    }
+
+    .hero-title {
+      font-family: 'Kapra Neue', 'Funkis A', sans-serif;
+      font-weight: 900;
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      text-transform: uppercase;
+      line-height: 1.05;
+      letter-spacing: -0.01em;
+      color: var(--off-black);
+      margin-bottom: 1rem;
+      opacity: 0;
+      transform: translateY(16px);
+      animation: fadeUp 0.7s ease 0.35s forwards;
+    }
+
+    .hero-title span {
+      color: var(--yellow);
+    }
+
+    .hero-sub {
+      font-size: 1.05rem;
+      font-weight: 400;
+      color: var(--grey);
+      max-width: 440px;
+      margin: 0 auto;
+      line-height: 1.6;
+      opacity: 0;
+      transform: translateY(12px);
+      animation: fadeUp 0.6s ease 0.5s forwards;
+    }
+
+    @keyframes fadeUp {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ─── CAMPAIGN GRID ─── */
+    .campaigns {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 2rem 6rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .campaign-card {
+      position: relative;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.75rem;
+      text-decoration: none;
+      color: var(--off-black);
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      transition: transform 0.35s cubic-bezier(0.22,0.61,0.36,1),
+                  border-color 0.35s ease,
+                  box-shadow 0.35s ease;
+      opacity: 0;
+      transform: translateY(20px);
+      cursor: pointer;
+    }
+
+    .campaign-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--yellow);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+    }
+
+    .campaign-card.visible {
+      animation: cardIn 0.55s cubic-bezier(0.22,0.61,0.36,1) forwards;
+    }
+
+    @keyframes cardIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .card-header {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.65rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 4px 10px;
+      border-radius: 100px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .card-status.live {
+      background: rgba(42,143,75,0.1);
+      color: #1d7a3a;
+    }
+
+    .card-status.live::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      background: #2a8f4b;
+      border-radius: 50%;
+      animation: pulse 2s ease infinite;
+    }
+
+    .card-status.ended {
+      background: rgba(0,0,0,0.04);
+      color: var(--grey);
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    .card-name {
+      font-family: 'Kapra Neue', 'Funkis A', sans-serif;
+      font-weight: 900;
+      font-size: 1.35rem;
+      text-transform: uppercase;
+      line-height: 1.15;
+      letter-spacing: 0.01em;
+    }
+
+    .card-date-row {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-top: 4px;
+    }
+
+    .card-date {
+      font-size: 0.75rem;
+      color: var(--grey);
+    }
+
+    .card-desc {
+      font-size: 0.85rem;
+      color: var(--grey);
+      line-height: 1.55;
+    }
+
+    .card-spark {
+      height: 32px;
+      width: 100%;
+    }
+
+    .card-spark polyline {
+      fill: none;
+      stroke-width: 1.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .card-kpis {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--border);
+    }
+
+    .card-kpi { display: flex; flex-direction: column; gap: 2px; }
+
+    .card-kpi-value {
+      font-family: 'Kapra Neue', 'Funkis A', sans-serif;
+      font-weight: 900;
+      font-size: 1.25rem;
+      line-height: 1.1;
+    }
+
+    .card-kpi-label {
+      font-size: 0.6rem;
+      font-weight: 500;
+      text-transform: none;
+      letter-spacing: 0.02em;
+      color: var(--faded);
+    }
+
+
+  </style>
+</head>
+<body>
+
+  <nav class="nav">
+    <a class="nav-brand" href="/">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M20.5441 0.00360107V7.28361C20.5441 8.78497 20.0076 10.2611 19.0967 11.4493C18.2687 12.5294 17.2102 13.3755 15.9392 13.8795C14.8159 14.38 13.3542 14.9093 13.293 14.9273C13.293 14.8768 13.293 14.8012 13.293 14.7616C13.293 12.3854 13.293 9.99831 13.3074 7.62924C13.347 5.62022 14.1391 3.91363 15.6116 2.53108C16.3605 1.8182 17.2066 1.39335 18.067 1.01891L20.5441 0.00720147V0.00360107Z"/><path d="M4.00745 9.40759C4.5475 9.61642 5.10195 9.78563 5.6096 10.0017C6.29007 10.2897 7.00294 10.5345 7.6366 10.9018C9.37917 11.9171 10.5277 13.4544 11.0353 15.4275C11.2046 16.0827 11.2694 16.7488 11.2658 17.4257C11.2622 19.5463 11.2658 21.6634 11.2658 23.784C11.2658 23.8524 11.2658 23.9208 11.2658 24C10.5817 23.9532 9.94443 23.802 9.33237 23.55C7.09295 22.6319 5.50519 21.0513 4.5727 18.819C4.19466 17.9081 4.01105 16.9612 4.01105 15.9819C4.01105 13.8577 4.01105 11.7046 4.01105 9.58041C4.01105 9.53001 4.01105 9.4832 4.01105 9.40399L4.00745 9.40759Z"/><path d="M11.2658 10.2575C10.9346 10.1387 10.6106 10.0343 10.3226 9.9263C9.47647 9.57346 8.68079 9.27102 7.84911 8.89298C6.14975 7.97128 4.93283 6.55993 4.34597 4.70212C4.10115 3.92803 3.99314 3.06034 4.00034 2.25025C4.00394 1.58418 4.00034 0.918101 4.00034 0.248427C4.00034 0.187221 4.00034 0.0864096 4.00034 0C4.27756 0.108012 4.56559 0.212423 4.81762 0.316835C5.6601 0.662473 6.54219 0.972107 7.35227 1.38255C8.93282 2.17824 10.0453 3.44558 10.7222 5.08376C11.111 6.02347 11.2839 7.00998 11.2658 8.02889V10.2575Z"/><path d="M20.544 14.0882C20.5332 14.9559 20.5944 16.4357 20.4 17.5626C20.0579 19.118 19.2299 20.5365 18.1174 21.6706C16.9904 22.8192 15.6007 23.5536 14.0238 23.9065C13.7609 23.9641 13.5881 23.9929 13.2965 23.9929C13.2965 23.568 13.2965 23.1792 13.2965 22.7904C13.2965 22.0163 13.2677 21.199 13.4261 20.4321C13.8257 18.4951 14.8626 16.9937 16.4648 15.8596C17.2641 15.3591 17.8401 15.1467 18.5782 14.8479C19.1759 14.6031 19.9319 14.2826 20.5476 14.0918"/></svg>
+    </a>
+    <button class="nav-add">
+      <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 1v12M1 7h12"/></svg>
+      New website
+    </button>
+  </nav>
+
+  <section class="hero">
+    <p class="hero-overline">Grain Test Kitchen</p>
+    <h1 class="hero-title">Campaign <span>Stats</span></h1>
+    <p class="hero-sub">Track performance across all marketing campaigns. Pick one to dive in.</p>
+  </section>
+
+  <section class="campaigns" id="campaigns"></section>
+
+
+  <script>
+    const CAMPAIGNS = [
+      {
+        slug: 'missing-recipes',
+        name: 'Missing Recipes',
+        status: 'live',
+        date: '14–27 Apr 2026',
+        desc: 'Interactive recipe hunt with QR codes placed at Grain outlets. Users guess which recipe they found to unlock a reward.',
+        kpis: { views: '4,827', matches: '1,664', codes: '893' },
+        kpiLabels: { views: 'Views', matches: 'Matches', codes: 'Codes Copied' },
+        spark: [12,18,15,22,28,35,31,38,34,29,36,42,48,52],
+        sparkColor: '#fecc07',
+      },
+      {
+        slug: 'flavour-personality',
+        name: 'Flavour Personality',
+        status: 'ended',
+        date: '8 Jan – 28 Feb 2026',
+        desc: 'Personality quiz matching users to their ideal Grain flavour profile. Shared on socials with custom result cards.',
+        kpis: { views: '12,340', matches: '8,912', codes: '3,104' },
+        kpiLabels: { views: 'Views', matches: 'Completed', codes: 'Shares' },
+        spark: [45,52,60,58,72,68,75,80,74,65,55,48,40,35],
+        sparkColor: '#9a9691',
+      },
+      {
+        slug: '#',
+        name: "What's Cooking June",
+        status: 'ended',
+        date: '20 May – 30 Jun 2025',
+        desc: 'Teaser campaign for the June menu launch. Users voted on dishes they wanted to see return.',
+        kpis: { views: '7,650', matches: '5,230', codes: '1,890' },
+        kpiLabels: { views: 'Views', matches: 'Votes', codes: 'Signups' },
+        spark: [20,25,30,42,55,68,72,78,70,62,50,45,38,30],
+        sparkColor: '#9a9691',
+      },
+    ];
+
+    function sparkPath(data, w, h) {
+      const max = Math.max(...data), min = Math.min(...data), range = max - min || 1;
+      return data.map((v, i) => `${(i / (data.length - 1)) * w},${h - ((v - min) / range) * (h - 4) - 2}`).join(' ');
+    }
+
+    const grid = document.getElementById('campaigns');
+
+    CAMPAIGNS.forEach((c, idx) => {
+      const isLink = c.slug !== '#';
+      const tag = isLink ? 'a' : 'div';
+      const card = document.createElement(tag);
+      card.className = 'campaign-card';
+      if (isLink) card.href = `${c.slug}.html`;
+      card.style.animationDelay = `${idx * 0.12}s`;
+
+      card.innerHTML = `
+        <div class="card-header">
+          <div class="card-name">${c.name}</div>
+          <div class="card-date-row">
+            <span class="card-date">${c.date}</span>
+            <span class="card-status ${c.status}">${c.status === 'live' ? 'Live' : 'Ended'}</span>
+          </div>
+        </div>
+        <div class="card-desc">${c.desc}</div>
+        <svg class="card-spark" viewBox="0 0 200 32" preserveAspectRatio="none">
+          <polyline points="${sparkPath(c.spark, 200, 32)}" stroke="${c.sparkColor}" />
+        </svg>
+        <div class="card-kpis">
+          <div class="card-kpi"><span class="card-kpi-value">${c.kpis.views}</span><span class="card-kpi-label">${c.kpiLabels.views}</span></div>
+          <div class="card-kpi"><span class="card-kpi-value">${c.kpis.matches}</span><span class="card-kpi-label">${c.kpiLabels.matches}</span></div>
+          <div class="card-kpi"><span class="card-kpi-value">${c.kpis.codes}</span><span class="card-kpi-label">${c.kpiLabels.codes}</span></div>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.campaign-card').forEach(c => observer.observe(c));
+  </script>
+</body>
+</html>
