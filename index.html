@@ -86,6 +86,25 @@
 
     .nav-add svg { width: 14px; height: 14px; }
 
+    .header-btn-outline {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 12px 20px 12px 18px;
+      background: var(--bg);
+      border: 1px solid var(--grey-light);
+      border-radius: 10px;
+      font-family: 'Funkis A', sans-serif;
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--off-black);
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+
+    .header-btn-outline:hover { border-color: var(--grey); }
+    .header-btn-outline svg { width: 14px; height: 14px; }
+
     /* ─── MODAL ─── */
     .modal-overlay {
       position: fixed;
@@ -534,9 +553,17 @@
     </a>
   </nav>
 
+  <div class="global-bar">
+    <span class="global-bar-count" id="totalCount">Total websites (3)</span>
+    <div class="global-bar-search">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="7" cy="7" r="5"/><path d="M11 11l3.5 3.5"/></svg>
+      <input type="text" id="campaignSearch" placeholder="Search by name of website" autocomplete="off" />
+    </div>
+  </div>
+
   <header class="page-header">
     <div class="header-title-row">
-      <h1 class="header-title">Website Statistics</h1>
+      <h1 class="header-title">Web Statistics</h1>
       <span class="header-count" id="campaignCount">3</span>
     </div>
     <div class="header-toolbar">
@@ -546,6 +573,10 @@
         <button class="header-tab" data-filter="ended">Ended</button>
       </div>
       <div class="header-actions">
+        <button class="header-btn-outline">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="2" y="2" width="12" height="12" rx="2"/><path d="M2 6h12M5 2v4M11 2v4"/></svg>
+          Pick a date
+        </button>
         <button class="nav-add" id="addWebsiteBtn">
           <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 1v12M1 7h12"/></svg>
           New website
@@ -553,14 +584,6 @@
       </div>
     </div>
   </header>
-
-  <div class="global-bar">
-    <span class="global-bar-count" id="totalCount">Total websites (3)</span>
-    <div class="global-bar-search">
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="7" cy="7" r="5"/><path d="M11 11l3.5 3.5"/></svg>
-      <input type="text" id="campaignSearch" placeholder="Search by name of website" autocomplete="off" />
-    </div>
-  </div>
 
   <section class="campaigns" id="campaigns"></section>
 
