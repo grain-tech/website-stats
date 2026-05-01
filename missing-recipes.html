@@ -663,8 +663,11 @@
       </section>
     </div>
 
+  <div id="gaLoading" style="position:fixed;inset:0;background:var(--bg);z-index:50;display:flex;align-items:center;justify-content:center;font-family:'Funkis A',sans-serif;color:var(--text-muted);font-size:0.9rem;transition:opacity 0.3s;">Loading analytics...</div>
   </main>
 
+  <script src="auth.js"></script>
+  <script src="ga-data.js"></script>
   <script>
     // ─── HELPERS ───
     const ns='http://www.w3.org/2000/svg';
@@ -672,7 +675,7 @@
     function countUp(el,target,suffix,dur=1000){const s=performance.now();(function t(now){const p=Math.min((now-s)/dur,1);const ease=1-Math.pow(1-p,3);el.textContent=Math.round(target*ease).toLocaleString()+suffix;if(p<1)requestAnimationFrame(t);})(performance.now());}
 
     // ─── DATA ───
-    const KPI=[
+    let KPI=[
       {label:'Page Views',value:90,suffix:'',change:'Since 27 Apr',dir:'up'},
       {label:'Active Users',value:15,suffix:'',change:'Since 27 Apr',dir:'up'},
       {label:'Sessions',value:48,suffix:'',change:'Since 27 Apr',dir:'up'},
@@ -680,12 +683,12 @@
       {label:'Events',value:251,suffix:'',change:'Since 27 Apr',dir:'up'},
     ];
 
-    const DAILY_VIEWS=[0,0,0,0,0,0,0,0,0,0,7,54,27,2];
-    const DAILY_SUBS= [0,0,0,0,0,0,0,0,0,0,3,22,11,1];
-    const DAILY_MATCH=[0,0,0,0,0,0,0,0,0,0,1,8,4,0];
-    const DAY_LABELS=['17 Apr','18 Apr','19 Apr','20 Apr','21 Apr','22 Apr','23 Apr','24 Apr','25 Apr','26 Apr','27 Apr','28 Apr','29 Apr','30 Apr'];
+    let DAILY_VIEWS=[0,0,0,0,0,0,0,0,0,0,7,54,27,2];
+    let DAILY_SUBS= [0,0,0,0,0,0,0,0,0,0,3,22,11,1];
+    let DAILY_MATCH=[0,0,0,0,0,0,0,0,0,0,1,8,4,0];
+    let DAY_LABELS=['17 Apr','18 Apr','19 Apr','20 Apr','21 Apr','22 Apr','23 Apr','24 Apr','25 Apr','26 Apr','27 Apr','28 Apr','29 Apr','30 Apr'];
 
-    const RECIPE_SPLIT=[
+    let RECIPE_SPLIT=[
       {name:'The PB&J',count:5,color:'#FECC07',img:'assets/dishes/pbj.jpg'},
       {name:'Antipasti Focaccia',count:3,color:'#F8D86F',img:'assets/dishes/antipasti.jpg'},
       {name:'Confit Salmon',count:2,color:'#31AA88',img:'assets/dishes/salmon.jpg'},
@@ -693,12 +696,12 @@
       {name:'San Bei Chicken',count:1,color:'#E0DCD7',img:'assets/dishes/sanbei.jpg'},
     ];
 
-    const DEVICES=[
+    let DEVICES=[
       {name:'Mobile',count:9,pct:'60%',color:'var(--yellow)'},
       {name:'Desktop',count:6,pct:'40%',color:'var(--grey-line)'},
     ];
 
-    const REFERRERS=[
+    let REFERRERS=[
       {name:'direct',count:48,color:'var(--yellow)'},
       {name:'grain-tech.github.io',count:22,color:'var(--yellow)'},
       {name:'l.instagram.com',count:12,color:'var(--yellow)'},
@@ -706,12 +709,12 @@
       {name:'m.facebook.com',count:3,color:'#e5e2dd'},
     ];
 
-    const OUTBOUND=[
+    let OUTBOUND=[
       {label:'Book your buffet',url:'grain.com.sg/whats-cooking-june-26',count:4},
       {label:'Copy code clicks',url:'FOUNDIT10 clipboard',count:8},
     ];
 
-    const FUNNEL=[
+    let FUNNEL=[
       {label:'Page Views',value:90,color:'#d5cfc5'},
       {label:'Typed a Guess',value:37,color:'#ddd5b8'},
       {label:'Matched Recipe',value:13,color:'#e2d9a8'},
@@ -719,7 +722,7 @@
       {label:'Copied Code',value:8,color:'#f2c744'},
     ];
 
-    const RECIPES_BAR=[
+    let RECIPES_BAR=[
       {name:'The PB&J',count:5,color:'#FECC07'},
       {name:'Antipasti Focaccia',count:3,color:'#F8D86F'},
       {name:'Confit Salmon',count:2,color:'#31AA88'},
@@ -727,7 +730,7 @@
       {name:'San Bei Chicken',count:1,color:'#E0DCD7'},
     ];
 
-    const FAILED=[
+    let FAILED=[
       {input:'peanut butter jelly',count:4},
       {input:'fried rice',count:3},
       {input:'pasta',count:2},
@@ -738,6 +741,7 @@
       {input:'hello',count:1},
     ];
 
+    function renderDashboard(){
     // ─── KPIs ───
     (function(){
       const row=document.getElementById('kpiRow');
@@ -745,7 +749,7 @@
         const d=document.createElement('div');
         d.className='kpi-card'+(k.highlight?' highlight':'');
         d.style.animationDelay=`${i*0.06}s`;
-        d.innerHTML=`<span class="kpi-label">${k.label}</span><span class="kpi-value" data-count="${k.value}" data-suffix="${k.suffix}">0</span><span class="kpi-sub ${k.dir}">${k.change}</span>`;
+        d.innerHTML=`<span class="kpi-label">${k.label}</span><span class="kpi-value"${k.static?'':` data-count="${k.value}" data-suffix="${k.suffix}"`}>${k.static||'0'}</span><span class="kpi-sub ${k.dir}">${k.change}</span>`;
         row.appendChild(d);
       });
     })();
@@ -910,6 +914,42 @@
     document.querySelectorAll('.kpi-card,.card').forEach(el=>io.observe(el));
     document.querySelectorAll('.kpi-card').forEach((c,i)=>{c.style.animationDelay=`${i*0.06}s`;});
     document.querySelectorAll('.card').forEach((c,i)=>{c.style.animationDelay=`${i*0.04}s`;});
+    } // end renderDashboard
+
+    // ─── INIT: fetch live GA data then render ───
+    (async function(){
+      var loadingEl=document.getElementById('gaLoading');
+      var token=window.grainAccessToken||null;
+      if(!token){
+        token=await new Promise(function(resolve){
+          window.grainOnAuth=resolve;
+          setTimeout(function(){resolve(null);},4000);
+        });
+      }
+      if(token&&typeof window.fetchGAData==='function'){
+        try{
+          var d=await window.fetchGAData(token);
+          if(d){
+            if(d.KPI&&d.KPI.length)KPI=d.KPI;
+            if(d.DAILY_VIEWS)DAILY_VIEWS=d.DAILY_VIEWS;
+            if(d.DAILY_SUBS)DAILY_SUBS=d.DAILY_SUBS;
+            if(d.DAILY_MATCH)DAILY_MATCH=d.DAILY_MATCH;
+            if(d.DAY_LABELS)DAY_LABELS=d.DAY_LABELS;
+            if(d.RECIPE_SPLIT&&d.RECIPE_SPLIT.length)RECIPE_SPLIT=d.RECIPE_SPLIT;
+            if(d.DEVICES&&d.DEVICES.length)DEVICES=d.DEVICES;
+            if(d.REFERRERS&&d.REFERRERS.length)REFERRERS=d.REFERRERS;
+            if(d.OUTBOUND&&d.OUTBOUND.length)OUTBOUND=d.OUTBOUND;
+            if(d.FUNNEL)FUNNEL=d.FUNNEL;
+            if(d.RECIPES_BAR&&d.RECIPES_BAR.length)RECIPES_BAR=d.RECIPES_BAR;
+            if(d.FAILED&&d.FAILED.length)FAILED=d.FAILED;
+          }
+        }catch(e){console.warn('GA fetch failed, using defaults:',e);}
+      }
+      renderDashboard();
+      if(loadingEl){loadingEl.style.opacity='0';setTimeout(function(){loadingEl.remove();},300);}
+      var navEl=document.getElementById('navUpdated');
+      if(navEl)navEl.textContent='Updated '+new Date().toLocaleTimeString('en-SG',{hour:'2-digit',minute:'2-digit'});
+    })();
 
     // ─── Edit modal ───
     const editOverlay=document.getElementById('editOverlay');
@@ -929,10 +969,6 @@
       if(n) document.querySelector('.header-sub').textContent=`${n} — All time overview`;
       closeEdit();
     });
-
-    // Nav timestamp
-    const navEl=document.getElementById('navUpdated');
-    if(navEl) navEl.textContent='Updated '+new Date().toLocaleTimeString('en-SG',{hour:'2-digit',minute:'2-digit'});
 
     // ─── DATE PICKER ───
     (function(){
