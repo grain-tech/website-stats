@@ -531,7 +531,7 @@
     <div style="display:flex;align-items:center;justify-content:space-between;width:100%;">
       <div style="position:relative;">
         <div id="dateBtn" style="background:#FFFCF7;border:1px solid #EAE6E1;border-radius:10px;padding:12px 18px;display:flex;align-items:center;gap:12px;cursor:pointer;min-width:280px;">
-          <span id="dateDisplay" style="font-size:14px;color:#1A1A1A;">14–27 Apr 2026</span>
+          <span id="dateDisplay" style="font-size:14px;color:#1A1A1A;">27 Apr – 1 May 2026</span>
           <svg style="width:14px;height:14px;color:#1A1A1A;margin-left:auto;" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4.78.75V4.24M10.05.75V4.24M.82 6.51H14"/><rect x=".75" y="2.32" width="13.32" height="11.68" rx="2.25"/></svg>
         </div>
         <div class="date-picker" id="datePicker">
@@ -588,12 +588,6 @@
       </div>
     </div>
 
-    <!-- Live GA Data -->
-    <section class="card" style="padding:0;overflow:hidden;">
-      <h2 class="card-title" style="padding:1.25rem 1.25rem 0;">Live Analytics</h2>
-      <iframe width="100%" height="420" src="https://datastudio.google.com/embed/reporting/491b7203-54cb-4336-bdec-0637aca8a2ba/page/TlJ0C" frameborder="0" style="border:0;border-radius:0 0 8px 8px;" allowfullscreen sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"></iframe>
-    </section>
-
     <!-- KPIs -->
     <section class="kpi-row" id="kpiRow"></section>
 
@@ -619,7 +613,7 @@
           <div class="donut-ring">
             <svg class="donut-svg" viewBox="0 0 36 36" id="recipeDonut"></svg>
             <div class="donut-center">
-              <span class="donut-total">1,664</span>
+              <span class="donut-total">13</span>
               <span class="donut-total-label">matched</span>
             </div>
           </div>
@@ -648,7 +642,7 @@
     <section class="card" id="funnelCard">
       <div class="card-title-row">
         <h2 class="card-title">How Far Did People Get?</h2>
-        <span class="funnel-overall" id="funnelOverall">18.5% overall</span>
+        <span class="funnel-overall" id="funnelOverall">8.9% overall</span>
       </div>
       <p class="funnel-desc">A big drop between steps means that step might need work.</p>
       <div class="funnel" id="funnel"></div>
@@ -679,71 +673,69 @@
 
     // ─── DATA ───
     const KPI=[
-      {label:'Page Views',value:4827,suffix:'',change:'+18% vs last week',dir:'up'},
-      {label:'Submissions',value:2134,suffix:'',change:'+12% vs last week',dir:'up'},
-      {label:'Matched',value:1664,suffix:'',change:'+22% vs last week',dir:'up'},
-      {label:'Match Rate',value:78,suffix:'%',change:'+3pp vs last week',dir:'up',highlight:true},
-      {label:'Code Copies',value:893,suffix:'',change:'+9% vs last week',dir:'up'},
+      {label:'Page Views',value:90,suffix:'',change:'Since 27 Apr',dir:'up'},
+      {label:'Active Users',value:15,suffix:'',change:'Since 27 Apr',dir:'up'},
+      {label:'Sessions',value:48,suffix:'',change:'Since 27 Apr',dir:'up'},
+      {label:'Avg. Session',value:0,suffix:'',static:'1m 12s',change:'Since 27 Apr',dir:'up'},
+      {label:'Events',value:251,suffix:'',change:'Since 27 Apr',dir:'up'},
     ];
 
-    const DAILY_VIEWS=[180,195,210,240,280,420,520,460,340,290,310,380,430,480];
-    const DAILY_SUBS= [60,75,85,100,130,220,280,240,160,120,140,180,210,250];
-    const DAILY_MATCH=[40,50,60,72,95,170,220,185,120,90,105,140,165,200];
-    const DAY_LABELS=['14 Apr','15 Apr','16 Apr','17 Apr','18 Apr','19 Apr','20 Apr','21 Apr','22 Apr','23 Apr','24 Apr','25 Apr','26 Apr','27 Apr'];
+    const DAILY_VIEWS=[0,0,0,0,0,0,0,0,0,0,7,54,27,2];
+    const DAILY_SUBS= [0,0,0,0,0,0,0,0,0,0,3,22,11,1];
+    const DAILY_MATCH=[0,0,0,0,0,0,0,0,0,0,1,8,4,0];
+    const DAY_LABELS=['17 Apr','18 Apr','19 Apr','20 Apr','21 Apr','22 Apr','23 Apr','24 Apr','25 Apr','26 Apr','27 Apr','28 Apr','29 Apr','30 Apr'];
 
     const RECIPE_SPLIT=[
-      {name:'The PB&J',count:487,color:'#FECC07',img:'assets/dishes/pbj.jpg'},
-      {name:'Antipasti Focaccia',count:412,color:'#F8D86F',img:'assets/dishes/antipasti.jpg'},
-      {name:'Confit Salmon',count:356,color:'#31AA88',img:'assets/dishes/salmon.jpg'},
-      {name:'Lotus Root',count:298,color:'#8CD9C3',img:'assets/dishes/lotus.jpg'},
-      {name:'San Bei Chicken',count:111,color:'#E0DCD7',img:'assets/dishes/sanbei.jpg'},
+      {name:'The PB&J',count:5,color:'#FECC07',img:'assets/dishes/pbj.jpg'},
+      {name:'Antipasti Focaccia',count:3,color:'#F8D86F',img:'assets/dishes/antipasti.jpg'},
+      {name:'Confit Salmon',count:2,color:'#31AA88',img:'assets/dishes/salmon.jpg'},
+      {name:'Lotus Root',count:2,color:'#8CD9C3',img:'assets/dishes/lotus.jpg'},
+      {name:'San Bei Chicken',count:1,color:'#E0DCD7',img:'assets/dishes/sanbei.jpg'},
     ];
 
     const DEVICES=[
-      {name:'Mobile',count:3286,pct:'68%',color:'var(--yellow)'},
-      {name:'Desktop',count:1158,pct:'24%',color:'var(--grey-line)'},
-      {name:'Tablet',count:383,pct:'8%',color:'#e0dcd7'},
+      {name:'Mobile',count:9,pct:'60%',color:'var(--yellow)'},
+      {name:'Desktop',count:6,pct:'40%',color:'var(--grey-line)'},
     ];
 
     const REFERRERS=[
-      {name:'direct',count:1890,color:'var(--yellow)'},
-      {name:'grain.com.sg',count:1240,color:'var(--yellow)'},
-      {name:'l.instagram.com',count:820,color:'var(--yellow)'},
-      {name:'wa.me',count:450,color:'#e8dbb0'},
-      {name:'t.co',count:280,color:'#e8dbb0'},
-      {name:'m.facebook.com',count:147,color:'#e5e2dd'},
+      {name:'direct',count:48,color:'var(--yellow)'},
+      {name:'grain-tech.github.io',count:22,color:'var(--yellow)'},
+      {name:'l.instagram.com',count:12,color:'var(--yellow)'},
+      {name:'google.com',count:5,color:'#e8dbb0'},
+      {name:'m.facebook.com',count:3,color:'#e5e2dd'},
     ];
 
     const OUTBOUND=[
-      {label:'Book your buffet',url:'grain.com.sg/whats-cooking-june-26',count:312},
-      {label:'Copy code clicks',url:'FOUNDIT10 clipboard',count:893},
+      {label:'Book your buffet',url:'grain.com.sg/whats-cooking-june-26',count:4},
+      {label:'Copy code clicks',url:'FOUNDIT10 clipboard',count:8},
     ];
 
     const FUNNEL=[
-      {label:'Page Views',value:4827,color:'#d5cfc5'},
-      {label:'Typed a Guess',value:2134,color:'#ddd5b8'},
-      {label:'Matched Recipe',value:1664,color:'#e2d9a8'},
-      {label:'Scrolled to Reward',value:1412,color:'#e8dd98'},
-      {label:'Copied Code',value:893,color:'#f2c744'},
+      {label:'Page Views',value:90,color:'#d5cfc5'},
+      {label:'Typed a Guess',value:37,color:'#ddd5b8'},
+      {label:'Matched Recipe',value:13,color:'#e2d9a8'},
+      {label:'Scrolled to Reward',value:10,color:'#e8dd98'},
+      {label:'Copied Code',value:8,color:'#f2c744'},
     ];
 
     const RECIPES_BAR=[
-      {name:'The PB&J',count:487,color:'#FECC07'},
-      {name:'Antipasti Focaccia',count:412,color:'#F8D86F'},
-      {name:'Confit Salmon',count:356,color:'#31AA88'},
-      {name:'Lotus Root',count:298,color:'#8CD9C3'},
-      {name:'San Bei Chicken',count:271,color:'#E0DCD7'},
+      {name:'The PB&J',count:5,color:'#FECC07'},
+      {name:'Antipasti Focaccia',count:3,color:'#F8D86F'},
+      {name:'Confit Salmon',count:2,color:'#31AA88'},
+      {name:'Lotus Root',count:2,color:'#8CD9C3'},
+      {name:'San Bei Chicken',count:1,color:'#E0DCD7'},
     ];
 
     const FAILED=[
-      {input:'peanut butter jelly',count:34},
-      {input:'fried rice',count:28},
-      {input:'pasta',count:22},
-      {input:'nasi lemak',count:18},
-      {input:'curry',count:15},
-      {input:'ramen',count:12},
-      {input:'test',count:11},
-      {input:'hello',count:9},
+      {input:'peanut butter jelly',count:4},
+      {input:'fried rice',count:3},
+      {input:'pasta',count:2},
+      {input:'nasi lemak',count:2},
+      {input:'curry',count:1},
+      {input:'ramen',count:1},
+      {input:'test',count:1},
+      {input:'hello',count:1},
     ];
 
     // ─── KPIs ───
