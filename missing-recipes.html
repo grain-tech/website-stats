@@ -415,6 +415,7 @@
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
     .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
     .grid-2-1 { display: grid; grid-template-columns: 2fr 1fr; gap: 1rem; }
+    .grid-2 > *, .grid-3 > *, .grid-2-1 > * { min-width: 0; }
     @media(max-width:800px) { .grid-2,.grid-3,.grid-2-1 { grid-template-columns:1fr; } }
 
     /* ─── LINE CHART ─── */
@@ -536,6 +537,8 @@
       overflow-x: auto;
       overflow-y: hidden;
       padding-bottom: 6px;
+      width: 100%;
+      min-width: 0;
     }
     .chart-wrap::-webkit-scrollbar { height: 10px; }
     .chart-wrap::-webkit-scrollbar-track { background: transparent; }
