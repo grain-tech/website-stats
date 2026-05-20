@@ -939,10 +939,13 @@
           setTimeout(function(){resolve(null);},4000);
         });
       }
+      var liveOk=false;
+      var errMsg='';
       if(token&&typeof window.fetchGAData==='function'){
         try{
           var d=await window.fetchGAData(token);
           if(d){
+            liveOk=true;
             if(d.KPI&&d.KPI.length)KPI=d.KPI;
             if(d.DAILY_VIEWS)DAILY_VIEWS=d.DAILY_VIEWS;
             if(d.DAILY_SUBS)DAILY_SUBS=d.DAILY_SUBS;
@@ -956,12 +959,21 @@
             if(d.RECIPES_BAR&&d.RECIPES_BAR.length)RECIPES_BAR=d.RECIPES_BAR;
             if(d.FAILED&&d.FAILED.length)FAILED=d.FAILED;
           }
-        }catch(e){console.warn('GA fetch failed, using defaults:',e);}
+          if(window.__grainGAError)errMsg=window.__grainGAError;
+        }catch(e){errMsg='GA fetch threw: '+(e&&e.message||e);console.warn(errMsg);}
+      }else if(!token){
+        errMsg='No access token (sign-in or token refresh failed)';
       }
       renderDashboard();
       if(loadingEl){loadingEl.style.opacity='0';setTimeout(function(){loadingEl.remove();},300);}
       var navEl=document.getElementById('navUpdated');
-      if(navEl)navEl.textContent='Updated '+new Date().toLocaleTimeString('en-SG',{hour:'2-digit',minute:'2-digit'});
+      if(navEl)navEl.textContent=(liveOk?'Live · ':'Mock · ')+'Updated '+new Date().toLocaleTimeString('en-SG',{hour:'2-digit',minute:'2-digit'});
+      if(errMsg){
+        var banner=document.createElement('div');
+        banner.style.cssText='position:fixed;top:0;left:0;right:0;z-index:9999;background:#FFE4E1;color:#7A0010;border-bottom:1px solid #FF2E2E;padding:10px 16px;font-family:"Funkis A",sans-serif;font-size:13px;display:flex;gap:10px;align-items:flex-start;';
+        banner.innerHTML='<strong style="flex-shrink:0">GA fetch failed:</strong><span style="flex:1;font-family:monospace;font-size:12px;word-break:break-word">'+errMsg.replace(/[<>&]/g,function(c){return{'<':'&lt;','>':'&gt;','&':'&amp;'}[c];})+'</span><button style="background:none;border:none;color:#7A0010;cursor:pointer;font-size:18px;line-height:1" onclick="this.parentNode.remove()">×</button>';
+        document.body.appendChild(banner);
+      }
     })();
 
     // ─── Edit modal ───

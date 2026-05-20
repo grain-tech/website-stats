@@ -37,7 +37,14 @@
       headers: { 'Authorization':'Bearer '+token, 'Content-Type':'application/json' },
       body: JSON.stringify(body),
     });
-    if (!res.ok) { console.error('GA API '+res.status); return null; }
+    if (!res.ok) {
+      var detail = '';
+      try { detail = await res.text(); } catch(e) {}
+      var msg = 'GA API '+res.status+': '+detail.slice(0,500);
+      console.error(msg);
+      window.__grainGAError = window.__grainGAError || msg;
+      return null;
+    }
     return res.json();
   }
 
