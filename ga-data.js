@@ -2,7 +2,7 @@
 (function() {
   // ─── CONFIG ───
   // Find your GA4 property ID: GA4 Admin > Property Settings > Property ID
-  const PROPERTY_ID = '';  // e.g. '123456789'
+  const PROPERTY_ID = '534712219';
   const START_DATE = '2026-04-17';
   const PAGE_PATH = '/missing-recipes';
   const API = 'https://analyticsdata.googleapis.com/v1beta/properties';

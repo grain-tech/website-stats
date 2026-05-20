@@ -2,7 +2,7 @@
 // Provides access tokens for GA4 Data API
 (function() {
   const ALLOWED_DOMAIN = 'grain.com.sg';
-  const CLIENT_ID = ''; // TODO: Set your Google OAuth Web Client ID
+  const CLIENT_ID = '968514116915-5iei6i0t86cs4kvq9kdo6fq70dgi0f6n.apps.googleusercontent.com';
   const SCOPES = 'email profile https://www.googleapis.com/auth/analytics.readonly';
   const SESSION_KEY = 'grain_auth';
 
