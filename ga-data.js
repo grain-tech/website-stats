@@ -237,7 +237,7 @@
 
     // Funnel
     data.FUNNEL = [
-      {label:'Page Views',       value:pv,                       color:FUNNEL_COLORS[0]},
+      {label:'Page Views',       value:visited,                  color:FUNNEL_COLORS[0]},
       {label:'Typed a Guess',    value:evMap['recipe_guess']||0, color:FUNNEL_COLORS[1]},
       {label:'Matched Recipe',   value:evMap['recipe_match']||0, color:FUNNEL_COLORS[2]},
       {label:'Scrolled to Reward',value:evMap['scroll_to_reward']||0, color:FUNNEL_COLORS[3]},
