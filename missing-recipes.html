@@ -791,7 +791,12 @@
       const svg=document.getElementById('lineChart');
       const pad={t:10,r:10,b:24,l:36};
       const minPerPoint=44;
-      const SVG_W=Math.max(600, pad.l+pad.r+(DAILY_VIEWS.length-1)*minPerPoint);
+      // Base SVG width on the card's available width so the chart fills it
+      // when data fits, and only overflows (and scrolls) when there's more
+      // data than that visible width can hold.
+      const cardW=svg.parentElement.clientWidth||600;
+      const dataW=pad.l+pad.r+(DAILY_VIEWS.length-1)*minPerPoint;
+      const SVG_W=Math.max(cardW, dataW);
       svg.setAttribute('viewBox','0 0 '+SVG_W+' 200');
       svg.setAttribute('width',SVG_W);
       const W=SVG_W-pad.l-pad.r,H=200-pad.t-pad.b;
