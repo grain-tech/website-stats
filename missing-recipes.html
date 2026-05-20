@@ -361,7 +361,7 @@
     @media(max-width:800px) { .grid-2,.grid-3,.grid-2-1 { grid-template-columns:1fr; } }
 
     /* ─── LINE CHART ─── */
-    .lc-svg { width:100%; height:auto; }
+    .lc-svg { height: 200px; display: block; }
     .lc-grid { stroke: #eae8e4; stroke-width: 0.5; }
     .lc-label { fill: var(--text-muted); font-family: 'Funkis A', sans-serif; font-size: 9px; }
     .lc-area-views { fill: rgba(197,192,186,0.15); }
@@ -474,7 +474,16 @@
     .bar-val { font-size:0.8rem; font-weight:700; text-align:right; font-variant-numeric:tabular-nums; }
 
     /* ─── CHART TOOLTIP ─── */
-    .chart-wrap { position: relative; }
+    .chart-wrap {
+      position: relative;
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding-bottom: 6px;
+    }
+    .chart-wrap::-webkit-scrollbar { height: 10px; }
+    .chart-wrap::-webkit-scrollbar-track { background: transparent; }
+    .chart-wrap::-webkit-scrollbar-thumb { background: var(--border); border-radius: 5px; }
+    .chart-wrap::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
     .chart-tooltip {
       position: fixed;
       background: #FFFCF7;
@@ -777,24 +786,28 @@
       });
     })();
 
-    // ─── LINE CHART (multi-line) ───
+    // ─── LINE CHART (multi-line, horizontally scrollable) ───
     (function(){
       const svg=document.getElementById('lineChart');
       const pad={t:10,r:10,b:24,l:36};
-      const W=600-pad.l-pad.r,H=200-pad.t-pad.b;
-      const allMax=Math.max(...DAILY_VIEWS)*1.15;
-      const x=i=>pad.l+(i/(DAILY_VIEWS.length-1))*W;
+      const minPerPoint=44;
+      const SVG_W=Math.max(600, pad.l+pad.r+(DAILY_VIEWS.length-1)*minPerPoint);
+      svg.setAttribute('viewBox','0 0 '+SVG_W+' 200');
+      svg.setAttribute('width',SVG_W);
+      const W=SVG_W-pad.l-pad.r,H=200-pad.t-pad.b;
+      const allMax=Math.max(...DAILY_VIEWS)*1.15||1;
+      const x=i=>pad.l+(i/(DAILY_VIEWS.length-1||1))*W;
       const y=v=>pad.t+H-(v/allMax)*H;
 
       // Grid
       for(let i=0;i<5;i++){
         const val=Math.round((i/4)*allMax);
-        svg.appendChild(svgEl('line',{x1:pad.l,x2:600-pad.r,y1:y(val),y2:y(val),class:'lc-grid'}));
+        svg.appendChild(svgEl('line',{x1:pad.l,x2:SVG_W-pad.r,y1:y(val),y2:y(val),class:'lc-grid'}));
         const lbl=svgEl('text',{x:pad.l-6,y:y(val)+3,'text-anchor':'end',class:'lc-label'});
         lbl.textContent=val;svg.appendChild(lbl);
       }
+      // Show every label since we have room to scroll
       DAY_LABELS.forEach((d,i)=>{
-        if(i%2!==0&&i!==DAY_LABELS.length-1)return;
         const lbl=svgEl('text',{x:x(i),y:200-4,'text-anchor':'middle',class:'lc-label'});
         lbl.textContent=d;svg.appendChild(lbl);
       });
@@ -816,12 +829,12 @@
       svg.appendChild(hoverRect);
       hoverRect.addEventListener('mousemove',e=>{
         const rect=svg.getBoundingClientRect();
-        const mx=(e.clientX-rect.left)/rect.width*600;
+        const sx=rect.width/SVG_W;
+        const mx=(e.clientX-rect.left)/sx;
         const idx=Math.round((mx-pad.l)/W*(DAILY_VIEWS.length-1));
         if(idx<0||idx>=DAILY_VIEWS.length)return;
         const cx=x(idx);
         hoverLine.setAttribute('x1',cx);hoverLine.setAttribute('x2',cx);hoverLine.setAttribute('opacity','1');
-        const sx=rect.width/600;
         tooltip.innerHTML=`<div style="font-weight:700;margin-bottom:4px">${DAY_LABELS[idx]}</div>
           <div class="chart-tooltip-row"><span class="chart-tooltip-dot" style="background:var(--grey-line)"></span>Views: ${DAILY_VIEWS[idx]}</div>
           <div class="chart-tooltip-row"><span class="chart-tooltip-dot" style="background:var(--yellow)"></span>Submissions: ${DAILY_SUBS[idx]}</div>
@@ -829,8 +842,8 @@
         tooltip.classList.add('show');
         var tipLeft=rect.left+cx*sx+12;
         var tipTop=rect.top+y(DAILY_VIEWS[idx])*(rect.height/200)-10;
-        // Clamp: flip left if tooltip overflows card right edge
-        if(tipLeft+tooltip.offsetWidth>rect.right-4) tipLeft=rect.left+cx*sx-tooltip.offsetWidth-12;
+        // Clamp: flip left if tooltip overflows viewport right edge
+        if(tipLeft+tooltip.offsetWidth>window.innerWidth-4) tipLeft=rect.left+cx*sx-tooltip.offsetWidth-12;
         // Clamp: don't go above card
         if(tipTop<rect.top) tipTop=rect.top+4;
         tooltip.style.left=tipLeft+'px';
