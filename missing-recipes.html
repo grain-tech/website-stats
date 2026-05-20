@@ -935,7 +935,7 @@
       if(!token){
         var hasSession=false;
         try{hasSession=!!JSON.parse(localStorage.getItem('grain_auth'));}catch(e){}
-        var timeoutMs=hasSession?4000:60000;
+        var timeoutMs=hasSession?15000:60000;
         token=await new Promise(function(resolve){
           var resolved=false;
           window.grainOnAuth=function(t){if(!resolved){resolved=true;resolve(t);}};
