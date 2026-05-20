@@ -933,9 +933,13 @@
       var loadingEl=document.getElementById('gaLoading');
       var token=window.grainAccessToken||null;
       if(!token){
+        var hasSession=false;
+        try{hasSession=!!JSON.parse(localStorage.getItem('grain_auth'));}catch(e){}
+        var timeoutMs=hasSession?4000:60000;
         token=await new Promise(function(resolve){
-          window.grainOnAuth=resolve;
-          setTimeout(function(){resolve(null);},4000);
+          var resolved=false;
+          window.grainOnAuth=function(t){if(!resolved){resolved=true;resolve(t);}};
+          setTimeout(function(){if(!resolved){resolved=true;resolve(null);}},timeoutMs);
         });
       }
       var liveOk=false;
