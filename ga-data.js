@@ -3,7 +3,7 @@
   // ─── CONFIG ───
   // Find your GA4 property ID: GA4 Admin > Property Settings > Property ID
   const PROPERTY_ID = '534712219';
-  const START_DATE = '2026-04-17';
+  const START_DATE = '2026-04-27';
   // Matches both old (/missing-recipes/) and new (/missingrecipes/) campaign URLs
   const PAGE_PATH_REGEX = '/missing[-]?recipes';
   const API = 'https://analyticsdata.googleapis.com/v1beta/properties';
@@ -162,16 +162,24 @@
     var data = {};
     var startLabel = fmtDate(START_DATE.replace(/-/g,''));
 
-    // KPIs
-    var pv = Math.round(metricVal(overview,0));
-    var avgSec = metricVal(overview,3);
-    var avgM = Math.floor(avgSec/60), avgS = Math.round(avgSec%60);
+    // Event counts map (used by KPIs and funnel)
+    var evMap = {};
+    if (events&&events.rows) events.rows.forEach(function(r){
+      evMap[r.dimensionValues[0].value] = parseInt(r.metricValues[0].value)||0;
+    });
+
+    // KPIs — mirror flavour-personality structure
+    var visited = Math.round(metricVal(overview,0));
+    var started = evMap['recipe_guess']||0;
+    var completed = evMap['recipe_match']||0;
+    var shared = evMap['copy_code']||0;
+    var rate = started ? Math.round(completed/started*100) : 0;
     data.KPI = [
-      {label:'Page Views',   value:pv,                              suffix:'', change:'Since '+startLabel, dir:'up'},
-      {label:'Active Users', value:Math.round(metricVal(overview,1)),suffix:'', change:'Since '+startLabel, dir:'up'},
-      {label:'Sessions',     value:Math.round(metricVal(overview,2)),suffix:'', change:'Since '+startLabel, dir:'up'},
-      {label:'Avg. Session', value:0, suffix:'', static:avgM+'m '+avgS+'s', change:'Since '+startLabel, dir:'up'},
-      {label:'Events',       value:Math.round(metricVal(overview,4)),suffix:'', change:'Since '+startLabel, dir:'up'},
+      {label:'Visited',         value:visited,   suffix:'',  change:'Since '+startLabel, dir:'up'},
+      {label:'Started',         value:started,   suffix:'',  change:'Since '+startLabel, dir:'up'},
+      {label:'Completed',       value:completed, suffix:'',  change:'Since '+startLabel, dir:'up'},
+      {label:'Completion rate', value:rate,      suffix:'%', change:'Since '+startLabel, dir:'up', highlight:true},
+      {label:'Shared',          value:shared,    suffix:'',  change:'Since '+startLabel, dir:'up'},
     ];
 
     // Daily arrays
@@ -183,12 +191,6 @@
     data.DAILY_VIEWS = allDates.map(function(d){ return vMap[d]||0; });
     data.DAILY_SUBS  = allDates.map(function(d){ return gMap[d]||0; });
     data.DAILY_MATCH = allDates.map(function(d){ return mMap[d]||0; });
-
-    // Event counts map (for funnel)
-    var evMap = {};
-    if (events&&events.rows) events.rows.forEach(function(r){
-      evMap[r.dimensionValues[0].value] = parseInt(r.metricValues[0].value)||0;
-    });
 
     // Devices
     data.DEVICES = [];

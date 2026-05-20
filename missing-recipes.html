@@ -160,7 +160,7 @@
       border: 1px solid var(--border);
       border-radius: 12px;
       padding: 1.25rem;
-      width: 320px;
+      width: 351px;
       box-shadow: 0 12px 40px rgba(0,0,0,0.1);
       opacity: 0;
       pointer-events: none;
@@ -304,49 +304,7 @@
     .kpi-sub.up { color: var(--green-dark); }
     .kpi-sub.down { color: var(--red); }
 
-    /* ─── REALTIME STRIP ─── */
-    .realtime-strip {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 1rem 1.25rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.85rem;
-      opacity: 0; transform: translateY(10px);
-    }
-    .realtime-strip.visible { animation: fadeUp 0.45s ease forwards; }
-    .realtime-header {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.7rem;
-      font-weight: 600;
-      color: var(--text-secondary);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-    .realtime-pulse {
-      width: 7px; height: 7px;
-      background: #2e7d32;
-      border-radius: 50%;
-      animation: pulse 2s ease infinite;
-    }
-    .realtime-cards {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1.5rem;
-    }
-    .realtime-card { display: flex; flex-direction: column; gap: 4px; }
-    .realtime-label { font-size: 12px; color: var(--text-secondary); }
-    .realtime-value {
-      font-family: 'Kapra Neue', 'Funkis A', sans-serif;
-      font-weight: 900;
-      font-size: 1.6rem;
-      line-height: 1;
-      transition: color 0.6s ease;
-    }
-    .realtime-value.pulse-flash { color: var(--green-dark); }
+    .kpi-value.pulse-flash { color: var(--green-dark); transition: color 0.6s ease; }
 
     @keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
 
@@ -576,12 +534,12 @@
     <h1 style="font-family:'Kapra Neue',sans-serif;font-weight:900;font-size:24px;text-transform:uppercase;line-height:1.5;color:#1A1A1A;">Missing Recipes</h1>
     <div style="display:flex;align-items:center;justify-content:space-between;width:100%;">
       <div style="display:flex;align-items:center;gap:12px;position:relative;">
-        <div id="dateBtnFrom" style="background:#FFFCF7;border:1px solid #EAE6E1;border-radius:10px;padding:12px 18px;display:flex;align-items:center;gap:12px;cursor:pointer;width:200px;">
+        <div id="dateBtnFrom" style="background:#FFFCF7;border:1px solid #EAE6E1;border-radius:10px;padding:12px 18px;display:flex;align-items:center;gap:12px;cursor:pointer;width:351px;">
           <span id="dateDisplayFrom" style="font-size:14px;color:#1A1A1A;">27 Apr 2026</span>
           <svg style="width:14px;height:14px;color:#1A1A1A;margin-left:auto;" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4.78.75V4.24M10.05.75V4.24M.82 6.51H14"/><rect x=".75" y="2.32" width="13.32" height="11.68" rx="2.25"/></svg>
         </div>
         <span style="color:#9A9691;font-size:14px;font-weight:500;">—</span>
-        <div id="dateBtnTo" style="background:#FFFCF7;border:1px solid #EAE6E1;border-radius:10px;padding:12px 18px;display:flex;align-items:center;gap:12px;cursor:pointer;width:200px;">
+        <div id="dateBtnTo" style="background:#FFFCF7;border:1px solid #EAE6E1;border-radius:10px;padding:12px 18px;display:flex;align-items:center;gap:12px;cursor:pointer;width:351px;">
           <span id="dateDisplayTo" style="font-size:14px;color:#1A1A1A;">20 May 2026</span>
           <svg style="width:14px;height:14px;color:#1A1A1A;margin-left:auto;" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4.78.75V4.24M10.05.75V4.24M.82 6.51H14"/><rect x=".75" y="2.32" width="13.32" height="11.68" rx="2.25"/></svg>
         </div>
@@ -638,28 +596,6 @@
         </div>
       </div>
     </div>
-
-    <!-- Realtime (auto-refresh every 30s) -->
-    <section class="realtime-strip" id="realtimeStrip">
-      <div class="realtime-header">
-        <span class="realtime-pulse"></span>
-        <span>Live · last 30 minutes</span>
-      </div>
-      <div class="realtime-cards">
-        <div class="realtime-card">
-          <span class="realtime-label">Active right now</span>
-          <span class="realtime-value" id="rtActive">—</span>
-        </div>
-        <div class="realtime-card">
-          <span class="realtime-label">Page views</span>
-          <span class="realtime-value" id="rtPageViews">—</span>
-        </div>
-        <div class="realtime-card">
-          <span class="realtime-label">Events</span>
-          <span class="realtime-value" id="rtEvents">—</span>
-        </div>
-      </div>
-    </section>
 
     <!-- KPIs -->
     <section class="kpi-row" id="kpiRow"></section>
@@ -748,11 +684,11 @@
 
     // ─── DATA ───
     let KPI=[
-      {label:'Page Views',value:90,suffix:'',change:'Since 27 Apr',dir:'up'},
-      {label:'Active Users',value:15,suffix:'',change:'Since 27 Apr',dir:'up'},
-      {label:'Sessions',value:48,suffix:'',change:'Since 27 Apr',dir:'up'},
-      {label:'Avg. Session',value:0,suffix:'',static:'1m 12s',change:'Since 27 Apr',dir:'up'},
-      {label:'Events',value:251,suffix:'',change:'Since 27 Apr',dir:'up'},
+      {label:'Visited',value:90,suffix:'',change:'Since 27 Apr',dir:'up'},
+      {label:'Started',value:37,suffix:'',change:'Since 27 Apr',dir:'up'},
+      {label:'Completed',value:13,suffix:'',change:'Since 27 Apr',dir:'up'},
+      {label:'Completion rate',value:35,suffix:'%',change:'Since 27 Apr',dir:'up',highlight:true},
+      {label:'Shared',value:8,suffix:'',change:'Since 27 Apr',dir:'up'},
     ];
 
     let DAILY_VIEWS=[0,0,0,0,0,0,0,0,0,0,7,54,27,2];
@@ -1049,7 +985,6 @@
         errMsg='No access token (sign-in or token refresh failed)';
       }
       renderDashboard();
-      document.getElementById('realtimeStrip').classList.add('visible');
       if(loadingEl){loadingEl.style.opacity='0';setTimeout(function(){loadingEl.remove();},300);}
       function updateNav(){
         var navEl=document.getElementById('navUpdated');
@@ -1063,31 +998,6 @@
         banner.innerHTML='<strong style="flex-shrink:0">GA fetch failed:</strong><span style="flex:1;font-family:monospace;font-size:12px;word-break:break-word">'+safeMsg+'</span><button id="grainReauth" style="background:#7A0010;color:#fff;border:none;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:600;white-space:nowrap">Re-sign-in</button><button style="background:none;border:none;color:#7A0010;cursor:pointer;font-size:18px;line-height:1" onclick="this.parentNode.remove()">×</button>';
         document.body.appendChild(banner);
         document.getElementById('grainReauth').addEventListener('click',function(){if(typeof window.grainLogout==='function')window.grainLogout();else{localStorage.removeItem('grain_auth');localStorage.removeItem('grain_token');sessionStorage.removeItem('grain_token');location.reload();}});
-      }
-
-      // ─── REALTIME PANEL ───
-      function setRT(id,newVal){
-        var el=document.getElementById(id);
-        if(!el) return;
-        var old=el.textContent;
-        var fmt=(newVal||0).toLocaleString();
-        if(old===fmt) return;
-        el.textContent=fmt;
-        el.classList.add('pulse-flash');
-        setTimeout(function(){el.classList.remove('pulse-flash');},800);
-      }
-      async function refreshRealtime(){
-        var t=window.grainAccessToken;
-        if(!t||typeof window.fetchRealtime!=='function') return;
-        var r=await window.fetchRealtime(t);
-        if(!r) return;
-        setRT('rtActive',r.activeUsers);
-        setRT('rtPageViews',r.pageViews30m);
-        setRT('rtEvents',r.events30m);
-      }
-      if(token){
-        refreshRealtime();
-        setInterval(refreshRealtime,30000);
       }
 
       // ─── FULL DATA AUTO-REFRESH (every 5 min) ───
