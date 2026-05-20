@@ -304,6 +304,50 @@
     .kpi-sub.up { color: var(--green-dark); }
     .kpi-sub.down { color: var(--red); }
 
+    /* ─── REALTIME STRIP ─── */
+    .realtime-strip {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      opacity: 0; transform: translateY(10px);
+    }
+    .realtime-strip.visible { animation: fadeUp 0.45s ease forwards; }
+    .realtime-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .realtime-pulse {
+      width: 7px; height: 7px;
+      background: #2e7d32;
+      border-radius: 50%;
+      animation: pulse 2s ease infinite;
+    }
+    .realtime-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+    .realtime-card { display: flex; flex-direction: column; gap: 4px; }
+    .realtime-label { font-size: 12px; color: var(--text-secondary); }
+    .realtime-value {
+      font-family: 'Kapra Neue', 'Funkis A', sans-serif;
+      font-weight: 900;
+      font-size: 1.6rem;
+      line-height: 1;
+      transition: color 0.6s ease;
+    }
+    .realtime-value.pulse-flash { color: var(--green-dark); }
+
     @keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
 
     /* ─── CARD ─── */
@@ -595,6 +639,28 @@
       </div>
     </div>
 
+    <!-- Realtime (auto-refresh every 30s) -->
+    <section class="realtime-strip" id="realtimeStrip">
+      <div class="realtime-header">
+        <span class="realtime-pulse"></span>
+        <span>Live · last 30 minutes</span>
+      </div>
+      <div class="realtime-cards">
+        <div class="realtime-card">
+          <span class="realtime-label">Active right now</span>
+          <span class="realtime-value" id="rtActive">—</span>
+        </div>
+        <div class="realtime-card">
+          <span class="realtime-label">Page views</span>
+          <span class="realtime-value" id="rtPageViews">—</span>
+        </div>
+        <div class="realtime-card">
+          <span class="realtime-label">Events</span>
+          <span class="realtime-value" id="rtEvents">—</span>
+        </div>
+      </div>
+    </section>
+
     <!-- KPIs -->
     <section class="kpi-row" id="kpiRow"></section>
 
@@ -748,6 +814,21 @@
     ];
 
     function renderDashboard(){
+    // Clear all dynamic containers so a re-render replaces (not appends)
+    ['kpiRow','recipeLegend','refList','outboundList','funnel','recipeBarChart','failedBody','deviceContent'].forEach(function(id){
+      var el=document.getElementById(id); if(el) el.innerHTML='';
+    });
+    ['lineChart','recipeDonut'].forEach(function(id){
+      var el=document.getElementById(id); if(el) while(el.firstChild) el.removeChild(el.firstChild);
+    });
+    // Update donut center total and funnel overall %
+    var totalRecipes=RECIPE_SPLIT.reduce(function(s,r){return s+r.count;},0);
+    var donutTotalEl=document.querySelector('.donut-total');
+    if(donutTotalEl) donutTotalEl.textContent=totalRecipes.toLocaleString();
+    var funnelOverall=FUNNEL[0]&&FUNNEL[0].value?((FUNNEL[FUNNEL.length-1].value/FUNNEL[0].value)*100).toFixed(1)+'% overall':'';
+    var funnelOverallEl=document.getElementById('funnelOverall');
+    if(funnelOverallEl) funnelOverallEl.textContent=funnelOverall;
+
     // ─── KPIs ───
     (function(){
       const row=document.getElementById('kpiRow');
@@ -968,17 +1049,72 @@
         errMsg='No access token (sign-in or token refresh failed)';
       }
       renderDashboard();
+      document.getElementById('realtimeStrip').classList.add('visible');
       if(loadingEl){loadingEl.style.opacity='0';setTimeout(function(){loadingEl.remove();},300);}
-      var navEl=document.getElementById('navUpdated');
-      if(navEl)navEl.textContent=(liveOk?'Live · ':'Mock · ')+'Updated '+new Date().toLocaleTimeString('en-SG',{hour:'2-digit',minute:'2-digit'});
+      function updateNav(){
+        var navEl=document.getElementById('navUpdated');
+        if(navEl)navEl.textContent=(liveOk?'Live · ':'Mock · ')+'Updated '+new Date().toLocaleTimeString('en-SG',{hour:'2-digit',minute:'2-digit'});
+      }
+      updateNav();
       if(errMsg){
         var banner=document.createElement('div');
         banner.style.cssText='position:fixed;top:0;left:0;right:0;z-index:9999;background:#FFE4E1;color:#7A0010;border-bottom:1px solid #FF2E2E;padding:10px 16px;font-family:"Funkis A",sans-serif;font-size:13px;display:flex;gap:10px;align-items:center;';
         var safeMsg=errMsg.replace(/[<>&]/g,function(c){return{'<':'&lt;','>':'&gt;','&':'&amp;'}[c];});
         banner.innerHTML='<strong style="flex-shrink:0">GA fetch failed:</strong><span style="flex:1;font-family:monospace;font-size:12px;word-break:break-word">'+safeMsg+'</span><button id="grainReauth" style="background:#7A0010;color:#fff;border:none;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:600;white-space:nowrap">Re-sign-in</button><button style="background:none;border:none;color:#7A0010;cursor:pointer;font-size:18px;line-height:1" onclick="this.parentNode.remove()">×</button>';
         document.body.appendChild(banner);
-        document.getElementById('grainReauth').addEventListener('click',function(){if(typeof window.grainLogout==='function')window.grainLogout();else{localStorage.removeItem('grain_auth');sessionStorage.removeItem('grain_token');location.reload();}});
+        document.getElementById('grainReauth').addEventListener('click',function(){if(typeof window.grainLogout==='function')window.grainLogout();else{localStorage.removeItem('grain_auth');localStorage.removeItem('grain_token');sessionStorage.removeItem('grain_token');location.reload();}});
       }
+
+      // ─── REALTIME PANEL ───
+      function setRT(id,newVal){
+        var el=document.getElementById(id);
+        if(!el) return;
+        var old=el.textContent;
+        var fmt=(newVal||0).toLocaleString();
+        if(old===fmt) return;
+        el.textContent=fmt;
+        el.classList.add('pulse-flash');
+        setTimeout(function(){el.classList.remove('pulse-flash');},800);
+      }
+      async function refreshRealtime(){
+        var t=window.grainAccessToken;
+        if(!t||typeof window.fetchRealtime!=='function') return;
+        var r=await window.fetchRealtime(t);
+        if(!r) return;
+        setRT('rtActive',r.activeUsers);
+        setRT('rtPageViews',r.pageViews30m);
+        setRT('rtEvents',r.events30m);
+      }
+      if(token){
+        refreshRealtime();
+        setInterval(refreshRealtime,30000);
+      }
+
+      // ─── FULL DATA AUTO-REFRESH (every 5 min) ───
+      async function refreshFull(){
+        var t=window.grainAccessToken;
+        if(!t||typeof window.fetchGAData!=='function') return;
+        window.__grainGAError=null;
+        try{
+          var d2=await window.fetchGAData(t);
+          if(!d2) return;
+          if(d2.KPI&&d2.KPI.length)KPI=d2.KPI;
+          if(d2.DAILY_VIEWS)DAILY_VIEWS=d2.DAILY_VIEWS;
+          if(d2.DAILY_SUBS)DAILY_SUBS=d2.DAILY_SUBS;
+          if(d2.DAILY_MATCH)DAILY_MATCH=d2.DAILY_MATCH;
+          if(d2.DAY_LABELS)DAY_LABELS=d2.DAY_LABELS;
+          if(d2.RECIPE_SPLIT&&d2.RECIPE_SPLIT.length)RECIPE_SPLIT=d2.RECIPE_SPLIT;
+          if(d2.DEVICES&&d2.DEVICES.length)DEVICES=d2.DEVICES;
+          if(d2.REFERRERS&&d2.REFERRERS.length)REFERRERS=d2.REFERRERS;
+          if(d2.OUTBOUND&&d2.OUTBOUND.length)OUTBOUND=d2.OUTBOUND;
+          if(d2.FUNNEL)FUNNEL=d2.FUNNEL;
+          if(d2.RECIPES_BAR&&d2.RECIPES_BAR.length)RECIPES_BAR=d2.RECIPES_BAR;
+          if(d2.FAILED&&d2.FAILED.length)FAILED=d2.FAILED;
+          renderDashboard();
+          updateNav();
+        }catch(e){console.warn('Auto-refresh failed:',e);}
+      }
+      if(token) setInterval(refreshFull,5*60*1000);
     })();
 
     // ─── Edit modal ───

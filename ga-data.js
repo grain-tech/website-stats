@@ -267,4 +267,44 @@
 
     return data;
   };
+
+  // Realtime — last 30 min. Uses GA4 Realtime Reporting API which is
+  // far cheaper per call than the standard Data API. Safe to poll every
+  // 30s. Returns active users, page views, and event count for the
+  // missing-recipes campaign across both old and new URLs.
+  window.fetchRealtime = async function(accessToken) {
+    if (!PROPERTY_ID) return null;
+    var URL = API + '/' + PROPERTY_ID + ':runRealtimeReport';
+    var pageFilterRT = {
+      filter: { fieldName:'unifiedPagePathScreen', stringFilter:{ matchType:'PARTIAL_REGEXP', value:PAGE_PATH_REGEX } }
+    };
+    try {
+      var res = await fetch(URL, {
+        method: 'POST',
+        headers: { 'Authorization':'Bearer '+accessToken, 'Content-Type':'application/json' },
+        body: JSON.stringify({
+          metrics:[{name:'activeUsers'},{name:'screenPageViews'},{name:'eventCount'}],
+          dimensionFilter: pageFilterRT,
+        }),
+      });
+      if (!res.ok) {
+        // Fall back to site-wide realtime if the path filter dimension isn't available
+        res = await fetch(URL, {
+          method: 'POST',
+          headers: { 'Authorization':'Bearer '+accessToken, 'Content-Type':'application/json' },
+          body: JSON.stringify({
+            metrics:[{name:'activeUsers'},{name:'screenPageViews'},{name:'eventCount'}],
+          }),
+        });
+        if (!res.ok) return null;
+      }
+      var d = await res.json();
+      var m = (d.rows && d.rows[0] && d.rows[0].metricValues) || [];
+      return {
+        activeUsers: parseInt((m[0]||{}).value) || 0,
+        pageViews30m: parseInt((m[1]||{}).value) || 0,
+        events30m: parseInt((m[2]||{}).value) || 0,
+      };
+    } catch(e) { return null; }
+  };
 })();
