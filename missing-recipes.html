@@ -969,9 +969,11 @@
       if(navEl)navEl.textContent=(liveOk?'Live · ':'Mock · ')+'Updated '+new Date().toLocaleTimeString('en-SG',{hour:'2-digit',minute:'2-digit'});
       if(errMsg){
         var banner=document.createElement('div');
-        banner.style.cssText='position:fixed;top:0;left:0;right:0;z-index:9999;background:#FFE4E1;color:#7A0010;border-bottom:1px solid #FF2E2E;padding:10px 16px;font-family:"Funkis A",sans-serif;font-size:13px;display:flex;gap:10px;align-items:flex-start;';
-        banner.innerHTML='<strong style="flex-shrink:0">GA fetch failed:</strong><span style="flex:1;font-family:monospace;font-size:12px;word-break:break-word">'+errMsg.replace(/[<>&]/g,function(c){return{'<':'&lt;','>':'&gt;','&':'&amp;'}[c];})+'</span><button style="background:none;border:none;color:#7A0010;cursor:pointer;font-size:18px;line-height:1" onclick="this.parentNode.remove()">×</button>';
+        banner.style.cssText='position:fixed;top:0;left:0;right:0;z-index:9999;background:#FFE4E1;color:#7A0010;border-bottom:1px solid #FF2E2E;padding:10px 16px;font-family:"Funkis A",sans-serif;font-size:13px;display:flex;gap:10px;align-items:center;';
+        var safeMsg=errMsg.replace(/[<>&]/g,function(c){return{'<':'&lt;','>':'&gt;','&':'&amp;'}[c];});
+        banner.innerHTML='<strong style="flex-shrink:0">GA fetch failed:</strong><span style="flex:1;font-family:monospace;font-size:12px;word-break:break-word">'+safeMsg+'</span><button id="grainReauth" style="background:#7A0010;color:#fff;border:none;border-radius:6px;padding:6px 12px;cursor:pointer;font-family:inherit;font-size:12px;font-weight:600;white-space:nowrap">Re-sign-in</button><button style="background:none;border:none;color:#7A0010;cursor:pointer;font-size:18px;line-height:1" onclick="this.parentNode.remove()">×</button>';
         document.body.appendChild(banner);
+        document.getElementById('grainReauth').addEventListener('click',function(){if(typeof window.grainLogout==='function')window.grainLogout();else{localStorage.removeItem('grain_auth');sessionStorage.removeItem('grain_token');location.reload();}});
       }
     })();
 
