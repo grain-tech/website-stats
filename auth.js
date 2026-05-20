@@ -144,8 +144,10 @@
       callback: handleTokenResponse,
     });
 
-    // Returning user: try silent token refresh
-    if (session) {
+    // Returning user with no cached token: try silent refresh.
+    // If a cached token is already loaded from sessionStorage we skip this
+    // so we don't trigger an unnecessary popup on every page refresh.
+    if (session && !cachedToken) {
       tokenClient.requestAccessToken({ prompt: '' });
     }
 

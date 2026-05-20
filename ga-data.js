@@ -42,8 +42,16 @@
       var detail = '';
       try { detail = await res.text(); } catch(e) {}
       var msg = 'GA API '+res.status+': '+detail.slice(0,500);
-      console.error(msg);
-      window.__grainGAError = window.__grainGAError || msg;
+      console.warn(msg);
+      // Don't surface "custom dimension not registered" as a user-facing
+      // error — that's an expected, known limitation until the dimension
+      // is registered in GA4 admin. Those queries fail silently and the
+      // affected sections fall back to mock data.
+      var isCustomDimensionMissing = res.status === 400
+        && /customEvent:[A-Za-z0-9_]+ is not a valid dimension/i.test(detail);
+      if (!isCustomDimensionMissing) {
+        window.__grainGAError = window.__grainGAError || msg;
+      }
       return null;
     }
     return res.json();
