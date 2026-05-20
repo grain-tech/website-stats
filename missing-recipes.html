@@ -148,105 +148,162 @@
     .btn:hover { border-color: var(--text-muted); }
     .btn svg { width: 16px; height: 16px; }
 
-    /* ─── DATE PICKER ─── */
-    .date-picker-wrap { position: relative; }
-
-    .date-picker {
+    /* ─── DATE PICKER (mirrors grain-core-prototypes bulk-edit) ─── */
+    .cal-popover {
       position: absolute;
       top: calc(100% + 8px);
       left: 0;
-      z-index: 50;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 1.25rem;
       width: 351px;
-      box-shadow: 0 12px 40px rgba(0,0,0,0.1);
-      opacity: 0;
-      pointer-events: none;
-      transform: translateY(-4px);
-      transition: opacity 0.2s, transform 0.2s;
+      background: #FFFCF6;
+      border: 0.5px solid var(--border);
+      border-radius: 10px;
+      box-shadow: 0 0 20px 3px rgba(239,239,239,0.5), 0 4px 24px rgba(0,0,0,0.06);
+      z-index: 100;
+      animation: cal-popover-in 280ms cubic-bezier(0.22,1,0.36,1);
     }
-
-    .date-picker.open { opacity: 1; pointer-events: auto; transform: translateY(0); }
-
-    .dp-header {
+    .cal-popover[hidden] { display: none; }
+    @keyframes cal-popover-in {
+      from { opacity: 0; transform: translateY(-12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .cal-body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      padding: 18px;
+      background: #FFFCF6;
+      border-bottom: 0.5px solid var(--border);
+      border-radius: 10px 10px 0 0;
+    }
+    .cal-head {
+      display: flex;
+      gap: 12px;
+      width: 100%;
+    }
+    .cal-select { position: relative; flex: 1; }
+    .cal-select-trigger {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 1rem;
-    }
-
-    .dp-month {
+      width: 100%;
+      padding: 12px 18px;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 10px;
       font-family: 'Funkis A', sans-serif;
-      font-weight: 700;
-      font-size: 1rem;
-    }
-
-    .dp-nav {
-      background: none; border: none; cursor: pointer;
-      color: var(--text); padding: 4px;
-      font-size: 1.1rem; line-height: 1;
-      border-radius: 4px;
-      transition: background 0.15s;
-    }
-
-    .dp-nav:hover { background: var(--border); }
-
-    .dp-grid {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      gap: 2px;
-      text-align: center;
-    }
-
-    .dp-day-label {
-      font-size: 0.75rem;
+      font-size: 14px;
       font-weight: 600;
       color: var(--text);
-      padding: 8px 0;
-    }
-
-    .dp-day {
-      font-size: 0.85rem;
-      padding: 8px 0;
-      border-radius: 50%;
       cursor: pointer;
-      border: none;
-      background: none;
+    }
+    .cal-select-trigger svg { width: 12px; height: 7px; flex-shrink: 0; color: var(--text); transition: transform 180ms ease; }
+    .cal-select-trigger.is-open svg { transform: rotate(180deg); }
+    .cal-select-menu {
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      width: 151px;
+      background: var(--bg);
+      border: 0.5px solid var(--border);
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(239,239,239,0.5);
+      z-index: 60;
+      max-height: 220px;
+      overflow: auto;
+    }
+    .cal-select-menu[hidden] { display: none; }
+    .cal-select-menu-inner {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding: 6px;
+    }
+    .cal-select-option {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      padding: 10px 14px;
+      background: var(--bg);
+      border: 0;
+      border-radius: 8px;
+      font-family: 'Funkis A', sans-serif;
+      font-size: 14px;
+      font-weight: 400;
+      line-height: 1.5;
+      color: var(--text-muted);
+      text-align: left;
+      cursor: pointer;
+    }
+    .cal-select-option:hover { background: var(--card); color: var(--text); }
+    .cal-select-option.active { background: var(--card); color: var(--text); }
+    .cal-weekdays {
+      display: grid;
+      grid-template-columns: repeat(7, 26.5px);
+      column-gap: 18px;
+      justify-content: center;
+      width: 100%;
+    }
+    .cal-weekdays span {
+      font-family: 'Funkis A', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
       color: var(--text);
-      transition: background 0.15s;
-      aspect-ratio: 1;
+      text-align: center;
+      line-height: 26.5px;
+    }
+    .cal-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 26.5px);
+      column-gap: 18px;
+      row-gap: 12px;
+      justify-content: center;
+      width: 100%;
+    }
+    .cal-cell {
       display: flex;
       align-items: center;
       justify-content: center;
+      width: 26.5px;
+      height: 26.5px;
+      background: transparent;
+      border: 0;
+      border-radius: 15px;
       font-family: 'Funkis A', sans-serif;
+      font-size: 14px;
+      font-weight: 400;
+      color: var(--text);
+      cursor: pointer;
+      padding: 0;
     }
-
-    .dp-day:hover { background: var(--border); }
-    .dp-day.today { background: var(--border); font-weight: 700; }
-    .dp-day.selected { background: var(--yellow); font-weight: 700; }
-    .dp-day.other { color: var(--grey-line); }
-    .dp-day.future { color: var(--grey-line); cursor: default; }
-    .dp-day.future:hover { background: none; }
-
-    .dp-footer {
+    .cal-cell:hover:not(.cal-cell-other):not(.cal-cell-selected) { background: var(--card); }
+    .cal-cell-other { color: var(--text-muted); opacity: 0.5; cursor: default; }
+    .cal-cell-other:hover { background: transparent; }
+    .cal-cell-today:not(.cal-cell-selected) { background: var(--border); }
+    .cal-cell-selected {
+      background: var(--yellow);
+      font-weight: 600;
+    }
+    .cal-foot {
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      margin-top: 0.75rem;
-      padding-top: 0.75rem;
-      border-top: 1px solid var(--border);
+      justify-content: flex-end;
+      background: var(--bg);
+      padding: 12px 18px;
+      border-radius: 0 0 10px 10px;
     }
-
-    .dp-clear {
-      background: none; border: none;
+    .cal-today-btn {
+      padding: 8px 14px;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 8px;
       font-family: 'Funkis A', sans-serif;
-      font-size: 0.8rem; color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
       cursor: pointer;
     }
-
-    .dp-clear:hover { color: var(--text); }
+    .cal-today-btn:hover { border-color: var(--text); }
 
     /* ─── DASHBOARD ─── */
     .dashboard {
@@ -552,17 +609,7 @@
           <span id="dateDisplayTo" style="font-size:14px;color:#1A1A1A;">20 May 2026</span>
           <svg style="width:14px;height:14px;color:#1A1A1A;margin-left:auto;" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4.78.75V4.24M10.05.75V4.24M.82 6.51H14"/><rect x=".75" y="2.32" width="13.32" height="11.68" rx="2.25"/></svg>
         </div>
-        <div class="date-picker" id="datePicker">
-          <div class="dp-header">
-            <button class="dp-nav" id="dpPrev">&#8249;</button>
-            <span class="dp-month" id="dpMonth"></span>
-            <button class="dp-nav" id="dpNext">&#8250;</button>
-          </div>
-          <div class="dp-grid" id="dpGrid"></div>
-          <div class="dp-footer">
-            <button class="dp-clear" id="dpClear">Clear</button>
-          </div>
-        </div>
+        <div class="cal-popover" id="datePicker" hidden></div>
       </div>
       <div style="display:flex;gap:12px;align-items:center;">
         <button class="btn" id="editBtn">Edit</button>
@@ -1068,54 +1115,156 @@
     (function(){
       const btnFrom=document.getElementById('dateBtnFrom');
       const btnTo=document.getElementById('dateBtnTo');
-      const picker=document.getElementById('datePicker');
-      if(!btnFrom||!btnTo||!picker)return;
-      let cur=new Date();const today=new Date();
+      const popover=document.getElementById('datePicker');
+      if(!btnFrom||!btnTo||!popover)return;
+      const MONTHS_SHORT=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      const chevronSvg='<svg viewBox="0 0 12 7" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 1l5 5 5-5"/></svg>';
+      const today=new Date();today.setHours(0,0,0,0);
       let activeField='from';
-      const grid=document.getElementById('dpGrid');
-      const monthEl=document.getElementById('dpMonth');
+      let selected={from:new Date(2026,3,27),to:new Date()};
+      selected.to.setHours(0,0,0,0);
+      let viewMonth=today.getMonth();
+      let viewYear=today.getFullYear();
 
-      function render(){
-        const y=cur.getFullYear(),m=cur.getMonth();
-        monthEl.textContent=cur.toLocaleString('en-GB',{month:'long',year:'numeric'});
+      popover.innerHTML=
+        '<div class="cal-body">'+
+          '<div class="cal-head">'+
+            '<div class="cal-select"><button type="button" class="cal-select-trigger cal-month-btn"><span class="cal-month-label"></span>'+chevronSvg+'</button><div class="cal-select-menu cal-month-menu" hidden></div></div>'+
+            '<div class="cal-select"><button type="button" class="cal-select-trigger cal-year-btn"><span class="cal-year-label"></span>'+chevronSvg+'</button><div class="cal-select-menu cal-year-menu" hidden></div></div>'+
+          '</div>'+
+          '<div class="cal-weekdays"><span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span></div>'+
+          '<div class="cal-grid"></div>'+
+        '</div>'+
+        '<div class="cal-foot"><button type="button" class="cal-today-btn">Today</button></div>';
+
+      const monthLabel=popover.querySelector('.cal-month-label');
+      const yearLabel=popover.querySelector('.cal-year-label');
+      const monthBtn=popover.querySelector('.cal-month-btn');
+      const yearBtn=popover.querySelector('.cal-year-btn');
+      const monthMenu=popover.querySelector('.cal-month-menu');
+      const yearMenu=popover.querySelector('.cal-year-menu');
+      const grid=popover.querySelector('.cal-grid');
+      const todayBtn=popover.querySelector('.cal-today-btn');
+
+      function fmt(d){return d.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});}
+      function sameDay(a,b){return a&&b&&a.getDate()===b.getDate()&&a.getMonth()===b.getMonth()&&a.getFullYear()===b.getFullYear();}
+      function setSelected(field,date){
+        selected[field]=date;
+        document.getElementById(field==='from'?'dateDisplayFrom':'dateDisplayTo').textContent=date?fmt(date):(field==='from'?'Start date':'End date');
+      }
+
+      function renderGrid(){
+        monthLabel.textContent=MONTHS_SHORT[viewMonth];
+        yearLabel.textContent=String(viewYear);
         grid.innerHTML='';
-        ['S','M','T','W','T','F','S'].forEach(d=>{grid.innerHTML+=`<div class="dp-day-label">${d}</div>`;});
-        const first=new Date(y,m,1).getDay();
-        const days=new Date(y,m+1,0).getDate();
-        const prevDays=new Date(y,m,0).getDate();
-        for(let i=first-1;i>=0;i--){const d=prevDays-i;grid.innerHTML+=`<button class="dp-day other">${d}</button>`;}
-        for(let d=1;d<=days;d++){
-          const isToday=d===today.getDate()&&m===today.getMonth()&&y===today.getFullYear();
-          const isFuture=new Date(y,m,d)>today;
-          grid.innerHTML+=`<button class="dp-day${isToday?' today':''}${isFuture?' future':''}">${d}</button>`;
+        const firstDow=new Date(viewYear,viewMonth,1).getDay();
+        const daysInMonth=new Date(viewYear,viewMonth+1,0).getDate();
+        const prevMonthDays=new Date(viewYear,viewMonth,0).getDate();
+        const totalCells=Math.ceil((firstDow+daysInMonth)/7)*7;
+        const sel=selected[activeField];
+        for(let i=0;i<totalCells;i++){
+          const cell=document.createElement('button');
+          cell.type='button';
+          cell.className='cal-cell';
+          let day,cellMonth,cellYear;
+          if(i<firstDow){day=prevMonthDays-firstDow+1+i;cellMonth=viewMonth-1;cellYear=viewYear;if(cellMonth<0){cellMonth=11;cellYear--;}cell.classList.add('cal-cell-other');}
+          else if(i>=firstDow+daysInMonth){day=i-(firstDow+daysInMonth)+1;cellMonth=viewMonth+1;cellYear=viewYear;if(cellMonth>11){cellMonth=0;cellYear++;}cell.classList.add('cal-cell-other');}
+          else{
+            day=i-firstDow+1;cellMonth=viewMonth;cellYear=viewYear;
+            const cellDate=new Date(cellYear,cellMonth,day);
+            if(sameDay(cellDate,today)) cell.classList.add('cal-cell-today');
+            if(sel&&sameDay(cellDate,sel)) cell.classList.add('cal-cell-selected');
+          }
+          cell.textContent=day;
+          if(!cell.classList.contains('cal-cell-other')){
+            cell.addEventListener('click',()=>{
+              setSelected(activeField,new Date(cellYear,cellMonth,day));
+              close();
+            });
+          }
+          grid.appendChild(cell);
         }
-        const rem=(first+days)%7;if(rem>0)for(let d=1;d<=7-rem;d++){grid.innerHTML+=`<button class="dp-day other">${d}</button>`;}
-        grid.querySelectorAll('.dp-day:not(.other):not(.future)').forEach(b=>{
-          b.addEventListener('click',()=>{
-            const sel=new Date(y,m,+b.textContent);
-            const fmt=sel.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
-            const target=activeField==='from'?'dateDisplayFrom':'dateDisplayTo';
-            document.getElementById(target).textContent=fmt;
-            picker.classList.remove('open');
-          });
+      }
+
+      function renderMonthMenu(){
+        monthMenu.innerHTML='<div class="cal-select-menu-inner"></div>';
+        const inner=monthMenu.firstElementChild;
+        MONTHS_SHORT.forEach((name,idx)=>{
+          const opt=document.createElement('button');
+          opt.type='button';
+          opt.className='cal-select-option'+(idx===viewMonth?' active':'');
+          opt.textContent=name;
+          opt.addEventListener('click',()=>{viewMonth=idx;monthMenu.hidden=true;monthBtn.classList.remove('is-open');renderGrid();});
+          inner.appendChild(opt);
         });
       }
-
-      function openPicker(field, btn){
-        const sameField=picker.classList.contains('open')&&activeField===field;
-        if(sameField){picker.classList.remove('open');return;}
-        activeField=field;
-        picker.style.left=btn.offsetLeft+'px';
-        picker.classList.add('open');
-        render();
+      function renderYearMenu(){
+        yearMenu.innerHTML='<div class="cal-select-menu-inner"></div>';
+        const inner=yearMenu.firstElementChild;
+        const start=viewYear-6;
+        for(let y=start;y<start+12;y++){
+          const opt=document.createElement('button');
+          opt.type='button';
+          opt.className='cal-select-option'+(y===viewYear?' active':'');
+          opt.textContent=String(y);
+          opt.addEventListener('click',()=>{viewYear=y;yearMenu.hidden=true;yearBtn.classList.remove('is-open');renderGrid();});
+          inner.appendChild(opt);
+        }
       }
 
-      btnFrom.addEventListener('click',e=>{e.stopPropagation();openPicker('from',btnFrom);});
-      btnTo.addEventListener('click',e=>{e.stopPropagation();openPicker('to',btnTo);});
-      document.getElementById('dpPrev').addEventListener('click',e=>{e.stopPropagation();cur.setMonth(cur.getMonth()-1);render();});
-      document.getElementById('dpNext').addEventListener('click',e=>{e.stopPropagation();cur.setMonth(cur.getMonth()+1);render();});
-      document.getElementById('dpClear').addEventListener('click',e=>{e.stopPropagation();const target=activeField==='from'?'dateDisplayFrom':'dateDisplayTo';document.getElementById(target).textContent=activeField==='from'?'Start date':'End date';picker.classList.remove('open');});
-      document.addEventListener('click',e=>{if(!picker.contains(e.target)&&!btnFrom.contains(e.target)&&!btnTo.contains(e.target))picker.classList.remove('open');});
+      monthBtn.addEventListener('click',e=>{
+        e.stopPropagation();
+        const open=!monthMenu.hidden;
+        yearMenu.hidden=true;yearBtn.classList.remove('is-open');
+        monthMenu.hidden=open;
+        monthBtn.classList.toggle('is-open',!open);
+        if(!open) renderMonthMenu();
+      });
+      yearBtn.addEventListener('click',e=>{
+        e.stopPropagation();
+        const open=!yearMenu.hidden;
+        monthMenu.hidden=true;monthBtn.classList.remove('is-open');
+        yearMenu.hidden=open;
+        yearBtn.classList.toggle('is-open',!open);
+        if(!open) renderYearMenu();
+      });
+      todayBtn.addEventListener('click',e=>{
+        e.stopPropagation();
+        setSelected(activeField,new Date());
+        close();
+      });
+
+      function open(field,btn){
+        activeField=field;
+        const anchor=selected[field]||today;
+        viewMonth=anchor.getMonth();
+        viewYear=anchor.getFullYear();
+        popover.style.left=btn.offsetLeft+'px';
+        popover.hidden=false;
+        monthMenu.hidden=true;yearMenu.hidden=true;
+        monthBtn.classList.remove('is-open');yearBtn.classList.remove('is-open');
+        renderGrid();
+      }
+      function close(){
+        popover.hidden=true;
+        monthMenu.hidden=true;yearMenu.hidden=true;
+        monthBtn.classList.remove('is-open');yearBtn.classList.remove('is-open');
+      }
+
+      btnFrom.addEventListener('click',e=>{
+        e.stopPropagation();
+        if(!popover.hidden&&activeField==='from'){close();return;}
+        open('from',btnFrom);
+      });
+      btnTo.addEventListener('click',e=>{
+        e.stopPropagation();
+        if(!popover.hidden&&activeField==='to'){close();return;}
+        open('to',btnTo);
+      });
+      document.addEventListener('click',e=>{
+        if(popover.hidden) return;
+        if(!popover.contains(e.target)&&!btnFrom.contains(e.target)&&!btnTo.contains(e.target)) close();
+      });
     })();
   </script>
 </body>
