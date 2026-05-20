@@ -4,7 +4,8 @@
   // Find your GA4 property ID: GA4 Admin > Property Settings > Property ID
   const PROPERTY_ID = '534712219';
   const START_DATE = '2026-04-17';
-  const PAGE_PATH = '/missing-recipes';
+  // Matches both old (/missing-recipes/) and new (/missingrecipes/) campaign URLs
+  const PAGE_PATH_REGEX = '/missing[-]?recipes';
   const API = 'https://analyticsdata.googleapis.com/v1beta/properties';
 
   // Recipe display config
@@ -21,12 +22,12 @@
   const DEVICE_COLORS = { mobile:'var(--yellow)', desktop:'var(--grey-line)', tablet:'#e8dbb0' };
 
   function pageFilter() {
-    return { filter: { fieldName:'pagePath', stringFilter:{ matchType:'BEGINS_WITH', value:PAGE_PATH } } };
+    return { filter: { fieldName:'pagePath', stringFilter:{ matchType:'PARTIAL_REGEXP', value:PAGE_PATH_REGEX } } };
   }
 
   function eventFilter(eventName) {
     return { andGroup:{ expressions:[
-      { filter:{ fieldName:'pagePath', stringFilter:{ matchType:'BEGINS_WITH', value:PAGE_PATH } } },
+      { filter:{ fieldName:'pagePath', stringFilter:{ matchType:'PARTIAL_REGEXP', value:PAGE_PATH_REGEX } } },
       { filter:{ fieldName:'eventName', stringFilter:{ value:eventName } } },
     ] } };
   }
@@ -139,7 +140,7 @@
       runReport(accessToken, {
         dateRanges:dr, dimensions:[{name:'linkUrl'}], metrics:[{name:'eventCount'}],
         dimensionFilter:{ andGroup:{ expressions:[
-          { filter:{ fieldName:'pagePath', stringFilter:{ matchType:'BEGINS_WITH', value:PAGE_PATH } } },
+          { filter:{ fieldName:'pagePath', stringFilter:{ matchType:'PARTIAL_REGEXP', value:PAGE_PATH_REGEX } } },
           { filter:{ fieldName:'eventName', stringFilter:{ value:'click' } } },
         ] } },
         orderBys:[{metric:{metricName:'eventCount'},desc:true}], limit:5,

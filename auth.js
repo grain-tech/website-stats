@@ -5,8 +5,29 @@
   const CLIENT_ID = '968514116915-5iei6i0t86cs4kvq9kdo6fq70dgi0f6n.apps.googleusercontent.com';
   const SCOPES = 'email profile https://www.googleapis.com/auth/analytics.readonly';
   const SESSION_KEY = 'grain_auth';
+  const TOKEN_KEY = 'grain_token';
 
   window.grainAccessToken = null;
+
+  function getCachedToken() {
+    try {
+      const t = JSON.parse(sessionStorage.getItem(TOKEN_KEY));
+      if (t && t.token && t.exp > Date.now() + 60000) return t.token;
+    } catch(e) {}
+    return null;
+  }
+  function setCachedToken(token, expiresIn) {
+    try {
+      sessionStorage.setItem(TOKEN_KEY, JSON.stringify({
+        token: token,
+        exp: Date.now() + ((expiresIn || 3600) - 60) * 1000,
+      }));
+    } catch(e) {}
+  }
+
+  // Restore token from sessionStorage if still valid
+  const cachedToken = getCachedToken();
+  if (cachedToken) window.grainAccessToken = cachedToken;
 
   function getSession() {
     try {
@@ -25,6 +46,7 @@
 
   function clearSession() {
     localStorage.removeItem(SESSION_KEY);
+    sessionStorage.removeItem(TOKEN_KEY);
     window.grainAccessToken = null;
     location.reload();
   }
@@ -144,6 +166,7 @@
     }
 
     window.grainAccessToken = response.access_token;
+    setCachedToken(response.access_token, response.expires_in);
 
     // First-time sign in: verify domain
     if (!getSession()) {
