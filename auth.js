@@ -9,16 +9,20 @@
 
   window.grainAccessToken = null;
 
+  // Token is cached in localStorage (not sessionStorage) so Firefox ETP
+  // doesn't wipe it between page loads. Token TTL is 1h, scope is
+  // read-only Analytics, and the auth gate already restricts access to
+  // @grain.com.sg, so localStorage is an acceptable trade-off here.
   function getCachedToken() {
     try {
-      const t = JSON.parse(sessionStorage.getItem(TOKEN_KEY));
+      const t = JSON.parse(localStorage.getItem(TOKEN_KEY));
       if (t && t.token && t.exp > Date.now() + 60000) return t.token;
     } catch(e) {}
     return null;
   }
   function setCachedToken(token, expiresIn) {
     try {
-      sessionStorage.setItem(TOKEN_KEY, JSON.stringify({
+      localStorage.setItem(TOKEN_KEY, JSON.stringify({
         token: token,
         exp: Date.now() + ((expiresIn || 3600) - 60) * 1000,
       }));
@@ -46,6 +50,7 @@
 
   function clearSession() {
     localStorage.removeItem(SESSION_KEY);
+    localStorage.removeItem(TOKEN_KEY);
     sessionStorage.removeItem(TOKEN_KEY);
     window.grainAccessToken = null;
     location.reload();
@@ -145,10 +150,12 @@
     });
 
     // Returning user with no cached token: try silent refresh.
-    // If a cached token is already loaded from sessionStorage we skip this
-    // so we don't trigger an unnecessary popup on every page refresh.
+    // If a cached token is already loaded we skip this so we don't trigger
+    // an unnecessary popup on every page refresh. The `hint` parameter
+    // tells Google which account to use so the chooser doesn't pop up
+    // when the user has multiple Google accounts signed in.
     if (session && !cachedToken) {
-      tokenClient.requestAccessToken({ prompt: '' });
+      tokenClient.requestAccessToken({ prompt: '', hint: session.email });
     }
 
     const btn = document.getElementById('authBtn');
