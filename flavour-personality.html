@@ -166,7 +166,7 @@
     <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="#9A9691" stroke-width="1.5"><path d="M6 3l5 5-5 5"/></svg>
     <span style="font-size:0.8rem;color:var(--text)">Flavour Personality</span>
     <div class="nav-right">
-      <span class="nav-updated">Campaign ended 28 Feb 2026</span>
+      <span class="nav-updated" id="navUpdated">Loading…</span>
     </div>
   </nav>
 
@@ -174,7 +174,7 @@
     <h1 style="font-family:'Kapra Neue',sans-serif;font-weight:900;font-size:24px;text-transform:uppercase;line-height:1.5;color:#1A1A1A;">Flavour Personality</h1>
     <div style="display:flex;align-items:center;justify-content:space-between;width:100%;">
       <div style="background:#FFFCF7;border:1px solid #EAE6E1;border-radius:10px;padding:12px 18px;display:flex;align-items:center;gap:12px;min-width:280px;">
-        <span style="font-size:14px;color:#1A1A1A;">8 Jan – 28 Feb 2026</span>
+        <span style="font-size:14px;color:#1A1A1A;" id="headerDate">All time</span>
         <svg style="width:14px;height:14px;color:#1A1A1A;margin-left:auto;" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4.78.75V4.24M10.05.75V4.24M.82 6.51H14"/><rect x=".75" y="2.32" width="13.32" height="11.68" rx="2.25"/></svg>
       </div>
       <div style="display:flex;gap:12px;align-items:center;">
@@ -239,7 +239,7 @@
           <div class="donut-ring">
             <svg class="donut-svg" viewBox="0 0 36 36" id="personalityDonut"></svg>
             <div class="donut-center">
-              <span class="donut-total">526</span>
+              <span class="donut-total" id="donutTotal">0</span>
               <span class="donut-total-label">total</span>
             </div>
           </div>
@@ -268,82 +268,31 @@
     <section class="card" id="funnelCard">
       <div class="card-title-row">
         <h2 class="card-title">How Far Did People Get?</h2>
-        <span class="funnel-overall">25% overall</span>
+        <span class="funnel-overall" id="funnelOverall">—</span>
       </div>
       <p class="funnel-desc">A big drop between steps means that question might need work.</p>
       <div class="funnel" id="funnel"></div>
     </section>
 
-    <!-- Share platform + Top questions -->
-    <div class="grid-2">
-      <section class="card" id="shareCard">
-        <h2 class="card-title">Share Platform</h2>
-        <div id="shareChart"></div>
-      </section>
-      <section class="card" id="questionCard">
-        <h2 class="card-title">Most Time-Consuming Questions</h2>
-        <div id="questionChart"></div>
-      </section>
-    </div>
+    <!-- Question drop-off -->
+    <section class="card" id="questionCard">
+      <div class="card-title-row">
+        <h2 class="card-title">Question Drop-off</h2>
+        <span class="funnel-overall" id="questionRetention">—</span>
+      </div>
+      <p class="funnel-desc">How many reached each question. A steep drop flags a question worth revisiting.</p>
+      <div id="questionChart"></div>
+    </section>
 
-    <!-- Retrospective -->
+    <!-- At a glance (data-derived) -->
     <section class="card" id="retroCard" style="margin-top:0.5rem">
-      <h2 class="card-title">Campaign Retrospective</h2>
+      <h2 class="card-title">At a Glance</h2>
       <div style="display:flex;flex-direction:column;gap:24px;">
-
         <div style="display:flex;flex-direction:column;gap:8px;">
           <div style="font-weight:600;font-size:14px;">Summary</div>
-          <p style="font-size:14px;color:#9A9691;line-height:1.6;">The Flavour Personality quiz ran for 52 days (8 Jan – 28 Feb 2026). It generated 1,695 page views and 431 completions at a 56% completion rate. 95 users shared their results, primarily via Instagram Stories and WhatsApp.</p>
+          <p style="font-size:14px;color:#9A9691;line-height:1.6;" id="retroSummary">—</p>
         </div>
-
-        <div style="display:flex;flex-direction:column;gap:8px;">
-          <div style="font-weight:600;font-size:14px;">What worked</div>
-          <ul style="font-size:14px;color:#9A9691;line-height:1.8;padding-left:18px;">
-            <li>Strong viral spike on 20–21 Apr drove 3x normal traffic — likely triggered by an Instagram Story reshare</li>
-            <li>High completion rate (56%) suggests the quiz was engaging once started</li>
-            <li>"Creature of Comfort" was the most common result (201), giving insight into the customer base</li>
-            <li>Mobile-first audience (55%) validated the decision to design for mobile screens</li>
-            <li>Direct traffic dominated (63%), meaning QR codes and word-of-mouth worked</li>
-          </ul>
-        </div>
-
-        <div style="display:flex;flex-direction:column;gap:8px;">
-          <div style="font-weight:600;font-size:14px;">What could improve</div>
-          <ul style="font-size:14px;color:#9A9691;line-height:1.8;padding-left:18px;">
-            <li>Only 45% of visitors started the quiz — the landing page needs a stronger hook</li>
-            <li>Share rate was low (22% of completions) — consider adding incentives or making the result card more share-worthy</li>
-            <li>Instagram feed drove only 12% of traffic vs. 38% from Stories — invest more in Story-format promotion</li>
-            <li>"Pick a weekend vibe" took 22s average — the longest question. Consider simplifying options</li>
-            <li>Only 62 outbound clicks to occasions page — add clearer CTAs on the result screen</li>
-          </ul>
-        </div>
-
-        <div style="display:flex;flex-direction:column;gap:8px;">
-          <div style="font-weight:600;font-size:14px;">Key takeaways for next campaign</div>
-          <ul style="font-size:14px;color:#9A9691;line-height:1.8;padding-left:18px;">
-            <li>Plan a coordinated Instagram Story push at launch — the viral spike proved it works</li>
-            <li>Reduce quiz to 4–5 questions max to improve start-to-complete rate</li>
-            <li>Build sharing into the result screen (pre-filled IG Story template, WhatsApp deep link)</li>
-            <li>Add a clear CTA on the result page linking to catering or menu pages</li>
-            <li>Consider running the quiz during a festive period for higher engagement</li>
-          </ul>
-        </div>
-
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;padding-top:12px;border-top:1px solid #EAE6E1;">
-          <div style="display:flex;flex-direction:column;gap:4px;">
-            <span style="font-family:'Kapra Neue',sans-serif;font-weight:900;font-size:1.5rem;text-transform:uppercase;">B+</span>
-            <span style="font-size:12px;color:#9A9691;">Overall grade</span>
-          </div>
-          <div style="display:flex;flex-direction:column;gap:4px;">
-            <span style="font-family:'Kapra Neue',sans-serif;font-weight:900;font-size:1.5rem;text-transform:uppercase;">56%</span>
-            <span style="font-size:12px;color:#9A9691;">Completion rate</span>
-          </div>
-          <div style="display:flex;flex-direction:column;gap:4px;">
-            <span style="font-family:'Kapra Neue',sans-serif;font-weight:900;font-size:1.5rem;text-transform:uppercase;">3.2x</span>
-            <span style="font-size:12px;color:#9A9691;">Peak vs average traffic</span>
-          </div>
-        </div>
-
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;padding-top:12px;border-top:1px solid #EAE6E1;" id="retroTiles"></div>
       </div>
     </section>
 
@@ -354,74 +303,107 @@
     const svgEl=(tag,attrs)=>{const e=document.createElementNS(ns,tag);for(const[k,v]of Object.entries(attrs||{}))e.setAttribute(k,v);return e;};
     function countUp(el,target,suffix,dur=1000){const s=performance.now();(function t(now){const p=Math.min((now-s)/dur,1);const ease=1-Math.pow(1-p,3);el.textContent=Math.round(target*ease).toLocaleString()+suffix;if(p<1)requestAnimationFrame(t);})(performance.now());}
 
-    // ─── DATA ───
-    const KPI=[
-      {label:'Visited',value:1695,suffix:''},
-      {label:'Started',value:764,suffix:''},
-      {label:'Completed',value:431,suffix:''},
-      {label:'Completion rate',value:56,suffix:'%',highlight:true},
-      {label:'Shared',value:95,suffix:''},
-    ];
+    // ─── DATA (live from wayf-quiz /api/stats, last-known-real fallback) ───
+    const STATS_API = 'https://flavour.grain.com.sg/api/stats';
 
-    const DAILY_VIEWS= [80,90,100,110,130,160,520,480,320,240,200,180,150,120];
-    const DAILY_START= [30,35,40,50,60,80,280,250,160,110,90,80,65,50];
-    const DAILY_COMPLETE=[15,18,22,28,35,50,190,170,105,72,58,50,40,30];
-    const DAY_LABELS=['14 Apr','15 Apr','16 Apr','17 Apr','18 Apr','19 Apr','20 Apr','21 Apr','22 Apr','23 Apr','24 Apr','25 Apr','26 Apr','27 Apr'];
+    const PERSONA_META = {
+      'picky-palate':     {name:'Picky Palate',        emoji:'🍴', color:'var(--yellow)'},
+      'clean-streak':     {name:'Clean Streak',        emoji:'🌿', color:'var(--green)'},
+      'creature-comfort': {name:'Creature of Comfort', emoji:'🧸', color:'var(--orange)'},
+      'flavour-chaser':   {name:'Flavour Chaser',      emoji:'🌶', color:'var(--red)'},
+    };
+    const DEVICE_META = { mobile:{name:'Mobile',color:'var(--yellow)'}, desktop:{name:'Desktop',color:'var(--grey-line)'}, tablet:{name:'Tablet',color:'#e8dbb0'} };
+    const QUESTION_COLORS = ['var(--yellow)','var(--orange)','var(--green)','var(--blue)','var(--purple)','var(--grey-line)'];
+    const REF_COLORS = ['var(--yellow)','var(--yellow)','var(--yellow)','#e8dbb0','#e5e2dd','#e5e2dd'];
 
-    const PERSONALITIES=[
-      {name:'Picky Palate',count:192,color:'var(--yellow)',emoji:'🍴'},
-      {name:'Clean Streak',count:88,color:'var(--green)',emoji:'🌿'},
-      {name:'Creature of Comfort',count:201,color:'var(--orange)',emoji:'🧸'},
-      {name:'Flavour Chaser',count:45,color:'var(--red)',emoji:'🌶'},
-    ];
+    // A legit Redis key is a simple slug. The public /api/track endpoint is
+    // unvalidated, so bots pollute it with SQLi/SSTI probe strings — drop any
+    // key that isn't clean before it reaches the UI.
+    const isClean = k => /^[a-z0-9_.\-]+$/i.test(k) && !/(select|sleep|md5|waitfor|extractvalue|convert|dbms_|pg_sleep|char\(|union)/i.test(k);
+    const cleanMap = m => { const o={}; for (const k in (m||{})) if (isClean(k)) o[k]=+m[k]||0; return o; };
+    const N = n => (+n||0).toLocaleString();
+    const fmtDay = iso => { const dt=new Date(iso); return dt.getDate()+' '+dt.toLocaleString('en-GB',{month:'short'}); };
 
-    const DEVICES=[
-      {name:'Mobile',count:942,pct:'55%',color:'var(--yellow)'},
-      {name:'Desktop',count:779,pct:'45%',color:'var(--grey-line)'},
-    ];
+    // Last-known-real snapshot (pulled 28 Aug 2026). Only used if the live API
+    // is unreachable — degrades to real numbers, never fiction.
+    const FALLBACK = {
+      allTime:{
+        events:{page_view:2115,quiz_started:884,quiz_completed:476,share_result:98,click_browse_personalities:72,click_catering:42},
+        personality:{'creature-comfort':218,'picky-palate':206,'clean-streak':101,'flavour-chaser':49},
+        questions:{q1:531,q2:503,q3:493,q4:485,q5:492,q6:476},
+        device:{mobile:1135,desktop:983},
+        referrer:{direct:1340,'grain.com.sg':389,'l.instagram.com':285,'occasions.grain.com.sg':35,'flavour.grain.com.sg':23,'m.facebook.com':16},
+      },
+      daily:[],
+    };
 
-    const REFERRERS=[
-      {name:'direct',count:1077,color:'var(--yellow)'},
-      {name:'grain.com.sg',count:350,color:'var(--yellow)'},
-      {name:'l.instagram.com',count:202,color:'var(--yellow)'},
-      {name:'occasions.grain.com.sg',count:28,color:'#e8dbb0'},
-      {name:'flavour.grain.com.sg',count:15,color:'#e5e2dd'},
-      {name:'m.facebook.com',count:8,color:'#e5e2dd'},
-    ];
+    let KPI, DAILY_VIEWS, DAILY_START, DAILY_COMPLETE, DAY_LABELS,
+        PERSONALITIES, DEVICES, REFERRERS, OUTBOUND, FUNNEL, QUESTIONS, SCALARS;
 
-    const OUTBOUND=[
-      {label:'Browse personalities',url:'occasions.grain.com.sg',count:62},
-      {label:'Dish clicks',url:'grain.com.sg/catering',count:37},
-    ];
+    function mapStats(s){
+      const at = s.allTime || {};
+      const ev = cleanMap(at.events);
+      const pv = ev.page_view||0, st = ev.quiz_started||0, cp = ev.quiz_completed||0, sh = ev.share_result||0;
+      const rate = st ? Math.round(cp/st*100) : 0;
+      KPI = [
+        {label:'Visited', value:pv, suffix:''},
+        {label:'Started', value:st, suffix:''},
+        {label:'Completed', value:cp, suffix:''},
+        {label:'Completion rate', value:rate, suffix:'%', highlight:true},
+        {label:'Shared', value:sh, suffix:''},
+      ];
 
-    const FUNNEL=[
-      {label:'Visited Page',value:1695,color:'#d5cfc5'},
-      {label:'Started Quiz',value:764,color:'#ddd5b8'},
-      {label:'Answered All',value:431,color:'#e2d9a8'},
-      {label:'Saw Result',value:418,color:'#e8dd98'},
-      {label:'Shared Result',value:95,color:'#f2c744'},
-    ];
+      const pers = cleanMap(at.personality);
+      PERSONALITIES = Object.keys(pers).filter(k=>PERSONA_META[k])
+        .map(k=>({name:PERSONA_META[k].name, count:pers[k], color:PERSONA_META[k].color, emoji:PERSONA_META[k].emoji}))
+        .sort((a,b)=>b.count-a.count);
 
-    const SHARES=[
-      {name:'Instagram Story',pct:45,count:43,color:'var(--purple)'},
-      {name:'WhatsApp',pct:28,count:27,color:'var(--green)'},
-      {name:'Telegram',pct:15,count:14,color:'var(--blue)'},
-      {name:'Twitter/X',pct:8,count:8,color:'var(--grey-line)'},
-      {name:'Other',pct:4,count:3,color:'#e5e2dd'},
-    ];
+      const dev = cleanMap(at.device);
+      const devTot = (dev.mobile||0)+(dev.desktop||0)+(dev.tablet||0);
+      DEVICES = ['mobile','desktop','tablet'].filter(k=>dev[k]).map(k=>({
+        name:DEVICE_META[k].name, count:dev[k],
+        pct: devTot? Math.round(dev[k]/devTot*100)+'%' : '0%', color:DEVICE_META[k].color }));
 
-    const QUESTIONS=[
-      {name:'Pick a weekend vibe',time:'22s',color:'var(--yellow)'},
-      {name:'Ideal dinner setting',time:'18s',color:'var(--orange)'},
-      {name:'Choose a drink',time:'14s',color:'var(--green)'},
-      {name:'Comfort food pick',time:'12s',color:'var(--blue)'},
-      {name:'Spice tolerance',time:'9s',color:'var(--purple)'},
-      {name:'Sweet vs savoury',time:'8s',color:'var(--grey-line)'},
-    ];
+      const ref = cleanMap(at.referrer);
+      REFERRERS = Object.entries(ref).sort((a,b)=>b[1]-a[1]).slice(0,6)
+        .map(([name,count],i)=>({name, count, color:REF_COLORS[i]||'#e5e2dd'}));
 
-    // ─── KPIs ───
-    (function(){
-      const row=document.getElementById('kpiRow');
+      OUTBOUND = [
+        {label:'Browse personalities', url:'occasions.grain.com.sg', count:ev.click_browse_personalities||0},
+        {label:'Dish clicks', url:'grain.com.sg/catering', count:ev.click_catering||0},
+      ].filter(o=>o.count);
+
+      FUNNEL = [
+        {label:'Visited Page',  value:pv, color:'#d5cfc5'},
+        {label:'Started Quiz',  value:st, color:'#ddd5b8'},
+        {label:'Completed Quiz',value:cp, color:'#e2d9a8'},
+        {label:'Shared Result', value:sh, color:'#f2c744'},
+      ];
+
+      const q = cleanMap(at.questions);
+      const qKeys = Object.keys(q).filter(k=>/^q\d+$/.test(k)).sort((a,b)=>+a.slice(1)-+b.slice(1));
+      QUESTIONS = qKeys.map((k,i)=>({name:'Question '+k.slice(1), count:q[k], color:QUESTION_COLORS[i%QUESTION_COLORS.length]}));
+
+      const daily = (s.daily||[]).slice().sort((a,b)=> a.date<b.date?-1:1);
+      DAY_LABELS     = daily.map(d=>fmtDay(d.date));
+      DAILY_VIEWS    = daily.map(d=>(cleanMap(d.events).page_view)||0);
+      DAILY_START    = daily.map(d=>(cleanMap(d.events).quiz_started)||0);
+      DAILY_COMPLETE = daily.map(d=>(cleanMap(d.events).quiz_completed)||0);
+      if (DAILY_VIEWS.length < 2){ DAY_LABELS=['','']; DAILY_VIEWS=[0,0]; DAILY_START=[0,0]; DAILY_COMPLETE=[0,0]; }
+
+      SCALARS = {
+        pv, st, cp, sh, rate,
+        personaTotal: PERSONALITIES.reduce((a,p)=>a+p.count,0),
+        overall: pv? Math.round(cp/pv*100) : 0,
+        qRetention: (qKeys.length>=2 && q[qKeys[0]])? Math.round(q[qKeys[qKeys.length-1]]/q[qKeys[0]]*100) : 0,
+        range: daily.length? (fmtDay(daily[0].date)+' – '+fmtDay(daily[daily.length-1].date)) : null,
+        topPersona: PERSONALITIES[0], mobile: DEVICES.find(d=>d.name==='Mobile'), topRef: REFERRERS[0],
+      };
+    }
+
+    // ─── RENDER ───
+    function renderKPI(){
+      const row=document.getElementById('kpiRow'); row.innerHTML='';
       KPI.forEach((k,i)=>{
         const d=document.createElement('div');
         d.className='kpi-card'+(k.highlight?' highlight':'');
@@ -429,17 +411,15 @@
         d.innerHTML=`<span class="kpi-label">${k.label}</span><span class="kpi-value" data-count="${k.value}" data-suffix="${k.suffix}">0</span>`;
         row.appendChild(d);
       });
-    })();
+    }
 
-    // ─── LINE CHART ───
-    (function(){
-      const svg=document.getElementById('lineChart');
+    function renderChart(){
+      const svg=document.getElementById('lineChart'); svg.innerHTML='';
       const pad={t:10,r:10,b:24,l:36};
       const W=600-pad.l-pad.r,H=200-pad.t-pad.b;
-      const allMax=Math.max(...DAILY_VIEWS)*1.15;
-      const x=i=>pad.l+(i/(DAILY_VIEWS.length-1))*W;
+      const allMax=Math.max(...DAILY_VIEWS,1)*1.15;
+      const x=i=>pad.l+(i/(Math.max(DAILY_VIEWS.length-1,1)))*W;
       const y=v=>pad.t+H-(v/allMax)*H;
-
       for(let i=0;i<5;i++){
         const val=Math.round((i/4)*allMax);
         svg.appendChild(svgEl('line',{x1:pad.l,x2:600-pad.r,y1:y(val),y2:y(val),class:'lc-grid'}));
@@ -459,25 +439,24 @@
       makeLine(DAILY_VIEWS,'lc-area-views','lc-line-views');
       makeLine(DAILY_START,'lc-area-started','lc-line-started');
       makeLine(DAILY_COMPLETE,'lc-area-completed','lc-line-completed');
-    })();
+    }
 
-    // ─── PERSONALITY DONUT ───
-    (function(){
-      const svg=document.getElementById('personalityDonut');
-      const legend=document.getElementById('personalityLegend');
-      const R=15.915;let offset=0;const total=PERSONALITIES.reduce((s,r)=>s+r.count,0);
+    function renderDonut(){
+      const svg=document.getElementById('personalityDonut'); svg.innerHTML='';
+      const legend=document.getElementById('personalityLegend'); legend.innerHTML='';
+      const R=15.915;let offset=0;const total=PERSONALITIES.reduce((s,r)=>s+r.count,0)||1;
       PERSONALITIES.forEach(d=>{
         const circ=2*Math.PI*R;const dash=(d.count/total)*circ;
         svg.appendChild(svgEl('circle',{cx:18,cy:18,r:R,fill:'none',stroke:d.color,'stroke-width':4,'stroke-dasharray':`${dash} ${circ-dash}`,'stroke-dashoffset':-offset,'stroke-linecap':'round'}));
         offset+=dash;
-        legend.innerHTML+=`<div class="legend-item"><span class="legend-emoji">${d.emoji}</span><span class="legend-name">${d.name}</span><span class="legend-val">${d.count}</span></div>`;
+        legend.innerHTML+=`<div class="legend-item"><span class="legend-emoji">${d.emoji}</span><span class="legend-name">${d.name}</span><span class="legend-val">${N(d.count)}</span></div>`;
       });
-    })();
+      document.getElementById('donutTotal').textContent=N(SCALARS.personaTotal);
+    }
 
-    // ─── DEVICES ───
-    (function(){
-      const el=document.getElementById('deviceContent');
-      const total=DEVICES.reduce((s,d)=>s+d.count,0);
+    function renderDevices(){
+      const el=document.getElementById('deviceContent'); el.innerHTML='';
+      const total=DEVICES.reduce((s,d)=>s+d.count,0)||1;
       let donutSvg=`<div class="device-ring"><svg class="donut-svg" viewBox="0 0 36 36">`;
       const R=15.915;let offset=0;
       DEVICES.forEach(d=>{
@@ -485,70 +464,93 @@
         donutSvg+=`<circle cx="18" cy="18" r="${R}" fill="none" stroke="${d.color}" stroke-width="4" stroke-dasharray="${dash} ${circ-dash}" stroke-dashoffset="${-offset}"/>`;
         offset+=dash;
       });
-      donutSvg+=`</svg><div class="device-center">${total.toLocaleString()}</div></div>`;
+      donutSvg+=`</svg><div class="device-center">${N(total)}</div></div>`;
       let legendHtml='<div class="device-legend">';
       DEVICES.forEach(d=>{
-        legendHtml+=`<div class="device-legend-item"><span class="device-legend-dot" style="background:${d.color}"></span><span>${d.name}</span><span class="device-legend-val">${d.count.toLocaleString()}</span><span class="device-legend-pct">(${d.pct})</span></div>`;
+        legendHtml+=`<div class="device-legend-item"><span class="device-legend-dot" style="background:${d.color}"></span><span>${d.name}</span><span class="device-legend-val">${N(d.count)}</span><span class="device-legend-pct">(${d.pct})</span></div>`;
       });
       legendHtml+='</div>';
       el.innerHTML=donutSvg+legendHtml;
-    })();
+    }
 
-    // ─── REFERRERS ───
-    (function(){
-      const el=document.getElementById('refList');
-      const max=REFERRERS[0].count;
+    function renderReferrers(){
+      const el=document.getElementById('refList'); el.innerHTML='';
+      const max=(REFERRERS[0]&&REFERRERS[0].count)||1;
       REFERRERS.forEach((r,i)=>{
         const w=Math.max((r.count/max)*100,8);
-        el.innerHTML+=`<div class="ref-item"><span class="ref-rank">${i+1}</span><span class="ref-name">${r.name}</span><div class="ref-bar" style="width:${w}%;background:${r.color}"></div><span class="ref-val">${r.count.toLocaleString()}</span></div>`;
+        el.innerHTML+=`<div class="ref-item"><span class="ref-rank">${i+1}</span><span class="ref-name">${r.name}</span><div class="ref-bar" style="width:${w}%;background:${r.color}"></div><span class="ref-val">${N(r.count)}</span></div>`;
       });
-    })();
+    }
 
-    // ─── OUTBOUND ───
-    (function(){
-      const el=document.getElementById('outboundList');
+    function renderOutbound(){
+      const el=document.getElementById('outboundList'); el.innerHTML='';
+      if(!OUTBOUND.length){ el.innerHTML='<div class="outbound-url">No outbound clicks yet</div>'; return; }
       OUTBOUND.forEach(o=>{
-        el.innerHTML+=`<div class="outbound-item"><div><div class="outbound-label">${o.label}</div><div class="outbound-url">${o.url}</div></div><div class="outbound-val">${o.count}</div></div>`;
+        el.innerHTML+=`<div class="outbound-item"><div><div class="outbound-label">${o.label}</div><div class="outbound-url">${o.url}</div></div><div class="outbound-val">${N(o.count)}</div></div>`;
       });
-    })();
+    }
 
-    // ─── FUNNEL ───
-    (function(){
-      const el=document.getElementById('funnel');
-      const maxV=FUNNEL[0].value;
+    function renderFunnel(){
+      const el=document.getElementById('funnel'); el.innerHTML='';
+      const maxV=FUNNEL[0].value||1;
       FUNNEL.forEach((s,i)=>{
         if(i>0)el.innerHTML+=`<div class="funnel-arrow"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M6 1v8M3 7l3 3 3-3" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg></div>`;
         const pct=(s.value/maxV*100).toFixed(1);
-        const drop=i>0?`-${((1-s.value/FUNNEL[i-1].value)*100).toFixed(0)}%`:'';
-        el.innerHTML+=`<div class="funnel-step"><div class="funnel-bar-wrap"><div class="funnel-bar" style="background:${s.color}" data-width="${pct}%">${s.label}${drop?`<span class="funnel-drop">${drop}</span>`:''}</div></div><span class="funnel-val">${s.value.toLocaleString()}</span></div>`;
+        const drop=i>0?`-${((1-s.value/(FUNNEL[i-1].value||1))*100).toFixed(0)}%`:'';
+        el.innerHTML+=`<div class="funnel-step"><div class="funnel-bar-wrap"><div class="funnel-bar" style="background:${s.color}" data-width="${pct}%">${s.label}${drop?`<span class="funnel-drop">${drop}</span>`:''}</div></div><span class="funnel-val">${N(s.value)}</span></div>`;
       });
-    })();
+      document.getElementById('funnelOverall').textContent=SCALARS.overall+'% overall';
+    }
 
-    // ─── SHARES ───
-    (function(){
-      const el=document.getElementById('shareChart');
-      const max=Math.max(...SHARES.map(s=>s.pct));
-      SHARES.forEach(s=>{
-        el.innerHTML+=`<div class="bar-row"><span class="bar-label">${s.name}</span><div class="bar-track"><div class="bar-fill" style="background:${s.color}" data-width="${s.pct}%"></div></div><span class="bar-val">${s.count}</span></div>`;
-      });
-    })();
-
-    // ─── QUESTIONS ───
-    (function(){
-      const el=document.getElementById('questionChart');
-      const times=QUESTIONS.map(q=>parseInt(q.time));
-      const max=Math.max(...times);
+    function renderQuestions(){
+      const el=document.getElementById('questionChart'); el.innerHTML='';
+      const max=Math.max(...QUESTIONS.map(q=>q.count),1);
       QUESTIONS.forEach(q=>{
-        const t=parseInt(q.time);
-        el.innerHTML+=`<div class="bar-row" style="grid-template-columns:160px 1fr 40px"><span class="bar-label">${q.name}</span><div class="bar-track"><div class="bar-fill" style="background:${q.color}" data-width="${(t/max*100).toFixed(1)}%"></div></div><span class="bar-val">${q.time}</span></div>`;
+        el.innerHTML+=`<div class="bar-row" style="grid-template-columns:110px 1fr 56px"><span class="bar-label">${q.name}</span><div class="bar-track"><div class="bar-fill" style="background:${q.color}" data-width="${(q.count/max*100).toFixed(1)}%"></div></div><span class="bar-val">${N(q.count)}</span></div>`;
       });
-    })();
+      const r=document.getElementById('questionRetention');
+      if(r) r.textContent=SCALARS.qRetention?`${SCALARS.qRetention}% reached the last question`:'—';
+    }
 
-    // ─── SCROLL ANIMATIONS ───
-    const io=new IntersectionObserver(entries=>{entries.forEach(e=>{if(!e.isIntersecting)return;e.target.classList.add('visible');io.unobserve(e.target);e.target.querySelectorAll('.bar-fill[data-width]').forEach(b=>{b.style.width=b.dataset.width;});e.target.querySelectorAll('.funnel-bar[data-width]').forEach(b=>{b.style.width=b.dataset.width;});const c=e.target.querySelector('.kpi-value[data-count]');if(c)countUp(c,+c.dataset.count,c.dataset.suffix||'');});},{threshold:0.12});
-    document.querySelectorAll('.kpi-card,.card').forEach(el=>io.observe(el));
-    document.querySelectorAll('.kpi-card').forEach((c,i)=>{c.style.animationDelay=`${i*0.06}s`;});
-    document.querySelectorAll('.card').forEach((c,i)=>{c.style.animationDelay=`${i*0.04}s`;});
+    function renderHeader(){
+      document.getElementById('headerDate').textContent = SCALARS.range ? ('Last 14 days · '+SCALARS.range) : 'All time';
+      const s=SCALARS, tp=s.topPersona, mob=s.mobile, tr=s.topRef;
+      const summary = `The quiz has drawn ${N(s.pv)} page views and ${N(s.cp)} completions — a ${s.rate}% completion rate. ${N(s.sh)} people shared their result.`
+        + (tp?` The most common personality is ${tp.name} (${N(tp.count)}).`:'')
+        + (mob?` ${mob.pct} of visitors came on mobile`:'')
+        + (tr?`${mob?', and':' The'} top referrer is ${tr.name}.`:'.');
+      document.getElementById('retroSummary').textContent = summary;
+      const tiles=[
+        {v:s.rate+'%', l:'Completion rate'},
+        {v: tp? tp.name : '—', l:'Most common result'},
+        {v: mob? mob.pct : '—', l:'Mobile share'},
+      ];
+      document.getElementById('retroTiles').innerHTML = tiles.map(t=>
+        `<div style="display:flex;flex-direction:column;gap:4px;"><span style="font-family:'Kapra Neue',sans-serif;font-weight:900;font-size:1.5rem;text-transform:uppercase;">${t.v}</span><span style="font-size:12px;color:#9A9691;">${t.l}</span></div>`
+      ).join('');
+    }
+
+    function setupScroll(){
+      const io=new IntersectionObserver(entries=>{entries.forEach(e=>{if(!e.isIntersecting)return;e.target.classList.add('visible');io.unobserve(e.target);e.target.querySelectorAll('.bar-fill[data-width]').forEach(b=>{b.style.width=b.dataset.width;});e.target.querySelectorAll('.funnel-bar[data-width]').forEach(b=>{b.style.width=b.dataset.width;});const c=e.target.querySelector('.kpi-value[data-count]');if(c)countUp(c,+c.dataset.count,c.dataset.suffix||'');});},{threshold:0.12});
+      document.querySelectorAll('.kpi-card,.card').forEach(el=>io.observe(el));
+      document.querySelectorAll('.kpi-card').forEach((c,i)=>{c.style.animationDelay=`${i*0.06}s`;});
+      document.querySelectorAll('.card').forEach((c,i)=>{c.style.animationDelay=`${i*0.04}s`;});
+    }
+
+    function renderAll(){
+      renderKPI(); renderChart(); renderDonut(); renderDevices();
+      renderReferrers(); renderOutbound(); renderFunnel(); renderQuestions();
+      renderHeader(); setupScroll();
+    }
+
+    // ─── BOOTSTRAP: fetch live, fall back to last-known-real ───
+    (function(){
+      const today = new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+      fetch(STATS_API, {cache:'no-store'})
+        .then(r=>{ if(!r.ok) throw new Error('http '+r.status); return r.json(); })
+        .then(s=>{ mapStats(s); renderAll(); document.getElementById('navUpdated').textContent='Live · updated '+today; })
+        .catch(err=>{ console.warn('stats fetch failed:',err); mapStats(FALLBACK); renderAll(); document.getElementById('navUpdated').textContent='Snapshot 28 Aug 2026 (live feed unreachable)'; });
+    })();
 
     // ─── Edit modal ───
     const editOverlay=document.getElementById('editOverlay');
@@ -560,12 +562,13 @@
     document.getElementById('editSave').addEventListener('click',()=>{
       const s=document.getElementById('editStart').value;
       const en=document.getElementById('editEnd').value;
-      if(s&&en){
+      // Dashboard is now a live all-time view driven by /api/stats — the
+      // header date/name reflect real data and aren't user-editable here.
+      const headerDate=document.getElementById('headerDate');
+      if(s&&en&&headerDate){
         const fmt=d=>{const dt=new Date(d);return `${dt.getDate()} ${dt.toLocaleString('en-GB',{month:'short'}).toUpperCase()} ${dt.getFullYear()}`;};
-        document.querySelector('.header-date').childNodes[0].textContent=`${fmt(s)} – ${fmt(en)} `;
+        headerDate.textContent=`${fmt(s)} – ${fmt(en)}`;
       }
-      const n=document.getElementById('editName').value;
-      if(n) document.querySelector('.header-sub').textContent=`${n} — All time overview`;
       closeEdit();
     });
   </script>
